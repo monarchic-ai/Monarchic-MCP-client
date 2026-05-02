@@ -39,3 +39,25 @@ pnpm dlx @monarchic-ai/mcp
 
 The shim does not execute Monarchic locally and does not read cloud resources
 directly. All tool behavior belongs to the hosted Monarchic MCP/API.
+
+## Hosted Smoke Test
+
+The package includes an opt-in non-interactive smoke command for deployment
+checks. It verifies the hosted MCP endpoint, required hosted tools, authenticated
+session resolution, and run listing. It can also follow a supplied run id or
+launch a new run when explicitly enabled.
+
+```sh
+export MONARCHIC_API_BASE_URL=https://dev-api.monarchic.io
+export MONARCHIC_BEARER_TOKEN=<token-or-api-key>
+export MONARCHIC_MCP_SMOKE_TENANT_ID=dev
+pnpm smoke:hosted
+```
+
+Optional launch/follow inputs:
+
+- `MONARCHIC_MCP_SMOKE_RUN_ID`: follow an existing run after the read-only smoke.
+- `MONARCHIC_MCP_SMOKE_LAUNCH=true`: launch a new run, then follow it when the
+  launch response includes a run id.
+- `MONARCHIC_MCP_SMOKE_PROJECT_KEY`: project key required when launch is enabled.
+- `MONARCHIC_MCP_SMOKE_PROMPT`: custom launch prompt.

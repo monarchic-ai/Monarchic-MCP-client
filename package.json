@@ -5,7 +5,8 @@
   "description": "Hosted Monarchic MCP stdio client shim.",
   "type": "module",
   "bin": {
-    "monarchic-mcp": "./dist/bin/monarchic-mcp.js"
+    "monarchic-mcp": "./dist/bin/monarchic-mcp.js",
+    "monarchic-mcp-smoke": "./dist/bin/hosted-mcp-smoke.js"
   },
   "files": [
     "dist",
@@ -19,6 +20,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "pnpm build && tsx --test tests/**/*.test.ts",
+    "smoke:hosted": "pnpm build && node dist/bin/hosted-mcp-smoke.js",
     "prepare": "pnpm build"
   },
   "keywords": [
