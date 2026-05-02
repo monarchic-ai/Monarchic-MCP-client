@@ -5,8 +5,8 @@
   "description": "Hosted Monarchic MCP stdio client shim.",
   "type": "module",
   "bin": {
-    "monarchic-mcp": "./dist/bin/monarchic-mcp.js",
-    "monarchic-mcp-smoke": "./dist/bin/hosted-mcp-smoke.js"
+    "monarchic-mcp": "dist/bin/monarchic-mcp.js",
+    "monarchic-mcp-smoke": "dist/bin/hosted-mcp-smoke.js"
   },
   "files": [
     "dist",
