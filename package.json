@@ -1,0 +1,35 @@
+{
+  "name": "@monarchic-ai/mcp",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Hosted Monarchic MCP stdio client shim.",
+  "type": "module",
+  "bin": {
+    "monarchic-mcp": "./dist/bin/monarchic-mcp.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "packageManager": "pnpm@10.8.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "pnpm build && tsx --test tests/**/*.test.ts",
+    "prepare": "pnpm build"
+  },
+  "keywords": [
+    "monarchic",
+    "mcp",
+    "model-context-protocol"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}
