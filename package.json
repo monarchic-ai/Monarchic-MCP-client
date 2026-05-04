@@ -1,6 +1,6 @@
 {
   "name": "@monarchic-ai/mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "description": "Hosted Monarchic MCP stdio client shim.",
   "type": "module",

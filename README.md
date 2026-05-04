@@ -29,6 +29,12 @@ export MONARCHIC_BEARER_TOKEN=<token>
 pnpm dlx @monarchic-ai/mcp
 ```
 
+When working from this repository, `nix develop` and direnv load `.env.local`
+when it exists. The published `monarchic-mcp` and `monarchic-mcp-smoke`
+commands also load `.env` and `.env.local` from the directory where the command
+is started, while preserving already-exported shell variables as highest
+priority. Keep local tokens in `.env.local`; the file is ignored by git.
+
 ## Configuration
 
 - `MONARCHIC_MCP_URL`: full hosted MCP HTTP endpoint. Takes precedence.
@@ -48,10 +54,15 @@ session resolution, and run listing. It can also follow a supplied run id or
 launch a new run when explicitly enabled.
 
 ```sh
-export MONARCHIC_API_BASE_URL=https://dev-api.monarchic.io
-export MONARCHIC_BEARER_TOKEN=<token-or-api-key>
-export MONARCHIC_MCP_SMOKE_TENANT_ID=dev
-pnpm smoke:hosted
+MONARCHIC_API_BASE_URL=https://dev-api.monarchic.io
+MONARCHIC_BEARER_TOKEN=<token-or-api-key>
+MONARCHIC_MCP_SMOKE_TENANT_ID=dev
+```
+
+Then run:
+
+```sh
+nix develop -c pnpm smoke:hosted
 ```
 
 Optional launch/follow inputs:

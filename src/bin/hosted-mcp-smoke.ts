@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 
 import { resolveMonarchicMcpClientConfig } from "../config.js";
+import { loadMonarchicEnvFiles } from "../envFile.js";
 import { runHostedMcpSmoke } from "../smoke.js";
+
+loadMonarchicEnvFiles();
 
 function envFlag(name: string): boolean {
   const value = process.env[name];

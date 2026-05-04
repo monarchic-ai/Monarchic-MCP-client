@@ -21,6 +21,13 @@
               pkgs.nodejs_22
               pkgs.pnpm
             ];
+            shellHook = ''
+              if [ -f .env.local ]; then
+                set -a
+                . ./.env.local
+                set +a
+              fi
+            '';
           };
         });
     };
