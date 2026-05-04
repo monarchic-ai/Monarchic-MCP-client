@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
 import { resolveMonarchicMcpClientConfig } from "../config.js";
+import { loadMonarchicEnvFiles } from "../envFile.js";
 import { runStdioProxy } from "../stdio.js";
 import { HttpUpstreamMcpClient } from "../upstream.js";
+
+loadMonarchicEnvFiles();
 
 const config = resolveMonarchicMcpClientConfig();
 const upstream = new HttpUpstreamMcpClient(config);
