@@ -24,7 +24,7 @@ Monarchic MCP endpoint running in infrastructure.
 You can also set an explicit hosted MCP endpoint:
 
 ```sh
-export MONARCHIC_MCP_URL=https://dev-api.monarchic.io/mcp
+export MONARCHIC_MCP_URL=https://dev-api.monarchic.io/mcp/monarchic
 export MONARCHIC_BEARER_TOKEN=<token>
 pnpm dlx @monarchic-ai/mcp
 ```
@@ -39,7 +39,7 @@ priority. Keep local tokens in `.env.local`; the file is ignored by git.
 
 - `MONARCHIC_MCP_URL`: full hosted MCP HTTP endpoint. Takes precedence.
 - `MONARCHIC_API_BASE_URL` or `MONARCHIC_API_URL`: base API URL. The shim appends
-  `/mcp`.
+  `/mcp/monarchic`.
 - `MONARCHIC_BEARER_TOKEN` or `MONARCHIC_API_BEARER_TOKEN`: bearer token.
 - `MONARCHIC_API_KEY`: API key fallback; sent as `Authorization: Bearer ...`.
 

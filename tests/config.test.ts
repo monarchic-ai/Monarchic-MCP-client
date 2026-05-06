@@ -23,7 +23,7 @@ test("config derives MCP URL from API base URL", () => {
       MONARCHIC_API_KEY: "mk_test",
     }),
     {
-      upstreamUrl: "https://dev-api.monarchic.io/mcp",
+      upstreamUrl: "https://dev-api.monarchic.io/mcp/monarchic",
       authorizationHeader: "Bearer mk_test",
     },
   );
@@ -31,7 +31,7 @@ test("config derives MCP URL from API base URL", () => {
 
 test("config defaults to production API MCP endpoint without auth", () => {
   assert.deepEqual(resolveMonarchicMcpClientConfig({}), {
-    upstreamUrl: "https://api.monarchic.io/mcp",
+    upstreamUrl: "https://api.monarchic.io/mcp/monarchic",
     authorizationHeader: null,
   });
 });
