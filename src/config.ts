@@ -30,7 +30,7 @@ export function resolveMonarchicMcpClientConfig(
   ]);
   const upstreamUrl =
     explicitMcpUrl ??
-    `${trimTrailingSlash(apiBaseUrl ?? "https://api.monarchic.io")}/mcp`;
+    `${trimTrailingSlash(apiBaseUrl ?? "https://api.monarchic.io")}/mcp/monarchic`;
   const token = readNonEmptyEnv(env, [
     "MONARCHIC_BEARER_TOKEN",
     "MONARCHIC_API_BEARER_TOKEN",
