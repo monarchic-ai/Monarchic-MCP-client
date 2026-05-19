@@ -45,6 +45,8 @@ priority. Keep local tokens in `.env.local`; the file is ignored by git.
 
 The shim does not execute Monarchic locally and does not read cloud resources
 directly. All tool behavior belongs to the hosted Monarchic MCP/API.
+The hosted MCP client architecture boundary is documented in
+[`docs/hosted-mcp-client-architecture.md`](docs/hosted-mcp-client-architecture.md).
 
 ## Hosted Smoke Test
 
