@@ -32,6 +32,22 @@ surface:
 The shim sends those credentials to the hosted endpoint. Session resolution,
 tenant access, route scopes, entitlement, and usage metering belong to the API.
 
+## Hosted Access Configuration
+
+MCP hosts should configure this package as a local stdio shim and point it at
+the hosted API/MCP endpoint:
+
+- `MONARCHIC_MCP_URL` for an explicit hosted MCP URL
+- `MONARCHIC_API_BASE_URL` or `MONARCHIC_API_URL` when deriving
+  `/mcp/monarchic`
+- `MONARCHIC_BEARER_TOKEN`, `MONARCHIC_API_BEARER_TOKEN`, or
+  `MONARCHIC_API_KEY` for hosted authorization
+
+The package may load ignored local `.env` or `.env.local` files for developer
+convenience, but published clients should treat credentials as operator-local
+configuration. It must never read AWS, Auth0, Cloudflare, database, SQS, S3, or
+worker-local resources directly.
+
 ## Hosted Endpoint Shape
 
 By default, the shim derives the MCP endpoint from `MONARCHIC_API_BASE_URL` by
