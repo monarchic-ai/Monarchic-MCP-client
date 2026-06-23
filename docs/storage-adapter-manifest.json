@@ -1,0 +1,356 @@
+{
+  "schema": "monarchic.storage_adapter_manifest.v1",
+  "repo_id": "monarchic-mcp-client",
+  "repo_path": "monarchic-mcp-client/monarchic-mcp-client",
+  "source_catalog": "docs/storage-artifact-catalog.md",
+  "generated_from_catalog_sha256": "a7df6b8fe8fb6097a445b253f224572006cceb199c3e00da0c444df565ba8cd4",
+  "adapter_policy": {
+    "structured_state": [
+      "sqlite",
+      "dynamodb"
+    ],
+    "object_storage_blob": [
+      "minio",
+      "s3"
+    ]
+  },
+  "artifacts": [
+    {
+      "artifact_id": "001-local-stdio-json-rpc-frames",
+      "source_catalog_row": 1,
+      "surface": "Local stdio JSON-RPC frames",
+      "classification": "structured state",
+      "owner": "monarchic-mcp-client",
+      "persistence": "Transient process stream",
+      "notes": "Requests and responses bridged between an MCP host and hosted Monarchic-MCP.",
+      "required_adapter_kinds": [
+        "sqlite",
+        "dynamodb"
+      ],
+      "adapters": [
+        {
+          "kind": "sqlite",
+          "adapter_id": "001-local-stdio-json-rpc-frames:sqlite",
+          "table": "artifact_state_records",
+          "primary_key": [
+            "repo_id",
+            "artifact_id"
+          ],
+          "payload_column": "payload_json",
+          "metadata_column": "metadata_json",
+          "timestamp_column": "updated_at",
+          "operations": [
+            "put_state",
+            "get_state",
+            "list_state",
+            "delete_state"
+          ]
+        },
+        {
+          "kind": "dynamodb",
+          "adapter_id": "001-local-stdio-json-rpc-frames:dynamodb",
+          "table": "${DYNAMODB_ARTIFACT_STATE_TABLE}",
+          "partition_key": "repo#monarchic-mcp-client",
+          "sort_key": "artifact#001-local-stdio-json-rpc-frames",
+          "payload_attribute": "payload_json",
+          "metadata_attribute": "metadata_json",
+          "operations": [
+            "PutItem",
+            "GetItem",
+            "Query",
+            "DeleteItem"
+          ]
+        }
+      ]
+    },
+    {
+      "artifact_id": "002-env-local",
+      "source_catalog_row": 2,
+      "surface": "`.env.local`",
+      "classification": "structured state",
+      "owner": "Operator",
+      "persistence": "Local config file",
+      "notes": "Local endpoint and token configuration; do not commit populated secrets.",
+      "required_adapter_kinds": [
+        "sqlite",
+        "dynamodb"
+      ],
+      "adapters": [
+        {
+          "kind": "sqlite",
+          "adapter_id": "002-env-local:sqlite",
+          "table": "artifact_state_records",
+          "primary_key": [
+            "repo_id",
+            "artifact_id"
+          ],
+          "payload_column": "payload_json",
+          "metadata_column": "metadata_json",
+          "timestamp_column": "updated_at",
+          "operations": [
+            "put_state",
+            "get_state",
+            "list_state",
+            "delete_state"
+          ]
+        },
+        {
+          "kind": "dynamodb",
+          "adapter_id": "002-env-local:dynamodb",
+          "table": "${DYNAMODB_ARTIFACT_STATE_TABLE}",
+          "partition_key": "repo#monarchic-mcp-client",
+          "sort_key": "artifact#002-env-local",
+          "payload_attribute": "payload_json",
+          "metadata_attribute": "metadata_json",
+          "operations": [
+            "PutItem",
+            "GetItem",
+            "Query",
+            "DeleteItem"
+          ]
+        }
+      ]
+    },
+    {
+      "artifact_id": "003-hosted-mcp-endpoint-url-and-token-environment",
+      "source_catalog_row": 3,
+      "surface": "Hosted MCP endpoint URL and token environment",
+      "classification": "structured state",
+      "owner": "Operator",
+      "persistence": "Environment/config",
+      "notes": "Runtime configuration.",
+      "required_adapter_kinds": [
+        "sqlite",
+        "dynamodb"
+      ],
+      "adapters": [
+        {
+          "kind": "sqlite",
+          "adapter_id": "003-hosted-mcp-endpoint-url-and-token-environment:sqlite",
+          "table": "artifact_state_records",
+          "primary_key": [
+            "repo_id",
+            "artifact_id"
+          ],
+          "payload_column": "payload_json",
+          "metadata_column": "metadata_json",
+          "timestamp_column": "updated_at",
+          "operations": [
+            "put_state",
+            "get_state",
+            "list_state",
+            "delete_state"
+          ]
+        },
+        {
+          "kind": "dynamodb",
+          "adapter_id": "003-hosted-mcp-endpoint-url-and-token-environment:dynamodb",
+          "table": "${DYNAMODB_ARTIFACT_STATE_TABLE}",
+          "partition_key": "repo#monarchic-mcp-client",
+          "sort_key": "artifact#003-hosted-mcp-endpoint-url-and-token-environment",
+          "payload_attribute": "payload_json",
+          "metadata_attribute": "metadata_json",
+          "operations": [
+            "PutItem",
+            "GetItem",
+            "Query",
+            "DeleteItem"
+          ]
+        }
+      ]
+    },
+    {
+      "artifact_id": "004-smoke-test-request-response-payloads",
+      "source_catalog_row": 4,
+      "surface": "Smoke test request/response payloads",
+      "classification": "structured state",
+      "owner": "Client shim tests",
+      "persistence": "Transient process payload",
+      "notes": "Used to verify hosted MCP connectivity.",
+      "required_adapter_kinds": [
+        "sqlite",
+        "dynamodb"
+      ],
+      "adapters": [
+        {
+          "kind": "sqlite",
+          "adapter_id": "004-smoke-test-request-response-payloads:sqlite",
+          "table": "artifact_state_records",
+          "primary_key": [
+            "repo_id",
+            "artifact_id"
+          ],
+          "payload_column": "payload_json",
+          "metadata_column": "metadata_json",
+          "timestamp_column": "updated_at",
+          "operations": [
+            "put_state",
+            "get_state",
+            "list_state",
+            "delete_state"
+          ]
+        },
+        {
+          "kind": "dynamodb",
+          "adapter_id": "004-smoke-test-request-response-payloads:dynamodb",
+          "table": "${DYNAMODB_ARTIFACT_STATE_TABLE}",
+          "partition_key": "repo#monarchic-mcp-client",
+          "sort_key": "artifact#004-smoke-test-request-response-payloads",
+          "payload_attribute": "payload_json",
+          "metadata_attribute": "metadata_json",
+          "operations": [
+            "PutItem",
+            "GetItem",
+            "Query",
+            "DeleteItem"
+          ]
+        }
+      ]
+    },
+    {
+      "artifact_id": "005-upstream-run-summaries-and-receipts",
+      "source_catalog_row": 5,
+      "surface": "Upstream run summaries and receipts",
+      "classification": "structured state",
+      "owner": "Hosted Monarchic-MCP/API",
+      "persistence": "Remote response/artifact",
+      "notes": "Durable run state belongs to Monarchic infrastructure.",
+      "required_adapter_kinds": [
+        "sqlite",
+        "dynamodb"
+      ],
+      "adapters": [
+        {
+          "kind": "sqlite",
+          "adapter_id": "005-upstream-run-summaries-and-receipts:sqlite",
+          "table": "artifact_state_records",
+          "primary_key": [
+            "repo_id",
+            "artifact_id"
+          ],
+          "payload_column": "payload_json",
+          "metadata_column": "metadata_json",
+          "timestamp_column": "updated_at",
+          "operations": [
+            "put_state",
+            "get_state",
+            "list_state",
+            "delete_state"
+          ]
+        },
+        {
+          "kind": "dynamodb",
+          "adapter_id": "005-upstream-run-summaries-and-receipts:dynamodb",
+          "table": "${DYNAMODB_ARTIFACT_STATE_TABLE}",
+          "partition_key": "repo#monarchic-mcp-client",
+          "sort_key": "artifact#005-upstream-run-summaries-and-receipts",
+          "payload_attribute": "payload_json",
+          "metadata_attribute": "metadata_json",
+          "operations": [
+            "PutItem",
+            "GetItem",
+            "Query",
+            "DeleteItem"
+          ]
+        }
+      ]
+    },
+    {
+      "artifact_id": "006-upstream-run-artifacts",
+      "source_catalog_row": 6,
+      "surface": "Upstream run artifacts",
+      "classification": "object storage / blob",
+      "owner": "Hosted Monarchic-MCP/API",
+      "persistence": "Remote artifact",
+      "notes": "Logs, reports, and patch bytes are remote artifacts, not local shim state.",
+      "required_adapter_kinds": [
+        "minio",
+        "s3"
+      ],
+      "adapters": [
+        {
+          "kind": "minio",
+          "adapter_id": "006-upstream-run-artifacts:minio",
+          "bucket": "${MINIO_ARTIFACT_BUCKET}",
+          "object_key_template": "monarchic-mcp-client/006-upstream-run-artifacts/{sha256_or_name}",
+          "metadata_headers": [
+            "x-amz-meta-repo-id",
+            "x-amz-meta-artifact-id",
+            "x-amz-meta-classification"
+          ],
+          "operations": [
+            "put_object",
+            "get_object",
+            "list_objects",
+            "delete_object"
+          ]
+        },
+        {
+          "kind": "s3",
+          "adapter_id": "006-upstream-run-artifacts:s3",
+          "bucket": "${S3_ARTIFACT_BUCKET}",
+          "object_key_template": "monarchic-mcp-client/006-upstream-run-artifacts/{sha256_or_name}",
+          "metadata_tags": [
+            "repo_id",
+            "artifact_id",
+            "classification"
+          ],
+          "operations": [
+            "PutObject",
+            "GetObject",
+            "ListObjectsV2",
+            "DeleteObject"
+          ]
+        }
+      ]
+    },
+    {
+      "artifact_id": "007-database-queries",
+      "source_catalog_row": 7,
+      "surface": "Database queries",
+      "classification": "structured state",
+      "owner": "Hosted service",
+      "persistence": "Not owned locally",
+      "notes": "This client shim does not query databases directly.",
+      "required_adapter_kinds": [
+        "sqlite",
+        "dynamodb"
+      ],
+      "adapters": [
+        {
+          "kind": "sqlite",
+          "adapter_id": "007-database-queries:sqlite",
+          "table": "artifact_state_records",
+          "primary_key": [
+            "repo_id",
+            "artifact_id"
+          ],
+          "payload_column": "payload_json",
+          "metadata_column": "metadata_json",
+          "timestamp_column": "updated_at",
+          "operations": [
+            "put_state",
+            "get_state",
+            "list_state",
+            "delete_state"
+          ]
+        },
+        {
+          "kind": "dynamodb",
+          "adapter_id": "007-database-queries:dynamodb",
+          "table": "${DYNAMODB_ARTIFACT_STATE_TABLE}",
+          "partition_key": "repo#monarchic-mcp-client",
+          "sort_key": "artifact#007-database-queries",
+          "payload_attribute": "payload_json",
+          "metadata_attribute": "metadata_json",
+          "operations": [
+            "PutItem",
+            "GetItem",
+            "Query",
+            "DeleteItem"
+          ]
+        }
+      ]
+    }
+  ]
+}
