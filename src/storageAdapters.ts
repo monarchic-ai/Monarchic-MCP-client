@@ -6,108 +6,34 @@ import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 
-export function defaultManifestPath() {
-  return resolve(here, "../docs/storage-adapter-manifest.json");
-}
-
-export function loadStorageAdapterManifest(manifestPath = defaultManifestPath()) {
-  return JSON.parse(readFileSync(manifestPath, "utf8"));
-}
-
-export function artifactById(manifest, artifactId) {
-  const artifact = manifest.artifacts.find((candidate) => candidate.artifact_id === artifactId);
-  if (!artifact) throw new Error("unknown storage artifact: " + artifactId);
-  return artifact;
-}
-
-export function verifyStorageAdapterManifest(manifest = loadStorageAdapterManifest()) {
-  for (const artifact of manifest.artifacts) {
-    const actual = artifact.adapters.map((adapter) => adapter.kind).sort().join(",");
-    const expected = artifact.classification === "structured state" ? "dynamodb,sqlite" : "minio,s3";
-    if (actual !== expected) throw new Error("artifact " + artifact.artifact_id + " has adapters " + actual + "; expected " + expected);
-  }
-}
+export function defaultManifestPath() { return resolve(here, "../docs/storage-adapter-manifest.json"); }
+export function defaultStateSchemaPath() { return resolve(here, "../docs/state-schema-5nf.json"); }
+export function loadStorageAdapterManifest(manifestPath = defaultManifestPath()) { return JSON.parse(readFileSync(manifestPath, "utf8")); }
+export function loadStateSchema5nf(schemaPath = defaultStateSchemaPath()) { return JSON.parse(readFileSync(schemaPath, "utf8")); }
+export function artifactById(manifest, artifactId) { const artifact = manifest.artifacts.find((candidate) => candidate.artifact_id === artifactId); if (!artifact) throw new Error("unknown storage artifact: " + artifactId); return artifact; }
+export function stateArtifactById(schema, artifactId) { const artifact = schema.structured_state_artifacts.find((candidate) => candidate.artifact_id === artifactId); if (!artifact) throw new Error("unknown 5NF state artifact: " + artifactId); return artifact; }
+export function verifyStorageAdapterManifest(manifest = loadStorageAdapterManifest()) { for (const artifact of manifest.artifacts) { const actual = artifact.adapters.map((adapter) => adapter.kind).sort().join(","); const expected = artifact.classification === "structured state" ? "dynamodb,sqlite" : "minio,s3"; if (actual !== expected) throw new Error("artifact " + artifact.artifact_id + " has adapters " + actual + "; expected " + expected); } }
+export function verifyStateSchema5nf(schema = loadStateSchema5nf()) { if (schema.schema !== "monarchic.state_schema_5nf.v2") throw new Error("unsupported state schema: " + schema.schema); for (const artifact of schema.structured_state_artifacts) { if (!artifact.sqlite_ddl?.length) throw new Error("artifact " + artifact.artifact_id + " has no sqlite_ddl"); if (!artifact.atomic_fact_tables?.length) throw new Error("artifact " + artifact.artifact_id + " has no atomic fact tables"); if (artifact.tables.some((table) => table.name.endsWith("__field_fact"))) throw new Error("artifact " + artifact.artifact_id + " uses generic EAV field_fact table"); } }
+function q(name) { return '"' + String(name).replaceAll('"', '""') + '"'; }
+function placeholders(count) { return Array.from({ length: count }, () => "?").join(", "); }
+function insertSql(table, columns) { return "INSERT OR REPLACE INTO " + q(table) + " (" + columns.map(q).join(", ") + ") VALUES (" + placeholders(columns.length) + ")"; }
+function firstColumn(table) { return table.columns[0].name; }
+function tableBySuffix(artifact, suffix) { const table = artifact.tables.find((candidate) => candidate.name.endsWith(suffix)); if (!table) throw new Error("artifact " + artifact.artifact_id + " missing table " + suffix); return table; }
 
 export class SqliteArtifactStateAdapter {
-  constructor(manifest, artifact, executor) {
-    this.manifest = manifest;
-    this.artifact = artifact;
-    this.executor = executor;
-    this.spec = artifact.adapters.find((adapter) => adapter.kind === "sqlite");
-    if (!this.spec) throw new Error("artifact " + artifact.artifact_id + " has no sqlite adapter");
-  }
-  initialize() {
-    return this.executor.run("CREATE TABLE IF NOT EXISTS artifact_state_records (repo_id TEXT NOT NULL, artifact_id TEXT NOT NULL, payload_json TEXT NOT NULL, metadata_json TEXT NOT NULL, updated_at TEXT NOT NULL, PRIMARY KEY (repo_id, artifact_id))");
-  }
-  put(payload, metadata = {}) {
-    this.initialize();
-    return this.executor.run("INSERT INTO artifact_state_records (repo_id, artifact_id, payload_json, metadata_json, updated_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(repo_id, artifact_id) DO UPDATE SET payload_json = excluded.payload_json, metadata_json = excluded.metadata_json, updated_at = excluded.updated_at", [this.manifest.repo_id, this.artifact.artifact_id, JSON.stringify(payload), JSON.stringify(metadata), new Date().toISOString()]);
-  }
-  get() {
-    return this.executor.get?.("SELECT payload_json, metadata_json, updated_at FROM artifact_state_records WHERE repo_id = ? AND artifact_id = ?", [this.manifest.repo_id, this.artifact.artifact_id]);
-  }
-  list() {
-    return this.executor.all?.("SELECT artifact_id, metadata_json, updated_at FROM artifact_state_records WHERE repo_id = ? ORDER BY artifact_id", [this.manifest.repo_id]) ?? [];
-  }
-  delete() {
-    return this.executor.run("DELETE FROM artifact_state_records WHERE repo_id = ? AND artifact_id = ?", [this.manifest.repo_id, this.artifact.artifact_id]);
-  }
+  constructor(stateSchema, artifact, executor) { this.stateSchema = stateSchema; this.artifact = artifact; this.executor = executor; }
+  static fromArtifactId(artifactId, executor, stateSchema = loadStateSchema5nf()) { return new SqliteArtifactStateAdapter(stateSchema, stateArtifactById(stateSchema, artifactId), executor); }
+  initialize() { for (const ddl of this.artifact.sqlite_ddl) this.executor.run(ddl); }
+  initializeAll() { this.initialize(); }
+  insertRow(table, values) { const columns = table.columns.map((column) => column.name).filter((column) => Object.prototype.hasOwnProperty.call(values, column)); return this.executor.run(insertSql(table.name, columns), columns.map((column) => values[column])); }
+  seedArtifactSchema(values = {}) { this.initialize(); const id = values.artifact_id ?? this.artifact.artifact_id; const identity = tableBySuffix(this.artifact, "__identity"); this.insertRow(identity, { [firstColumn(identity)]: id, surface_name: this.artifact.surface, catalog_row_number: this.artifact.source_catalog_row, classification: "structured state" }); const catalog = tableBySuffix(this.artifact, "__catalog_version"); this.insertRow(catalog, { [firstColumn(catalog)]: id, catalog_sha256: this.stateSchema.source_catalog_sha256, schema_version: this.stateSchema.schema }); const owner = tableBySuffix(this.artifact, "__owner"); this.insertRow(owner, { [firstColumn(owner)]: id, owner_name: values.owner_name ?? this.artifact.owner, owner_scope: values.owner_scope ?? "catalog" }); const persistence = tableBySuffix(this.artifact, "__persistence"); this.insertRow(persistence, { [firstColumn(persistence)]: id, persistence_kind: values.persistence_kind ?? this.artifact.persistence, location_pattern: values.location_pattern ?? this.artifact.surface, environment_selector: values.environment_selector ?? null }); return id; }
+  putAtomicFact(fieldName, value, source = "adapter") { this.initialize(); const fact = this.artifact.atomic_fact_tables.find((candidate) => candidate.field_name === fieldName); if (!fact) throw new Error("artifact " + this.artifact.artifact_id + " has no atomic fact " + fieldName); const table = this.artifact.tables.find((candidate) => candidate.name === fact.table); return this.insertRow(table, { [table.columns[0].name]: this.artifact.artifact_id, [fact.value_column]: value, fact_source: source }); }
+  putRelationship(relationship, targetId, role = relationship, cardinality = "many-to-many-decomposed") { this.initialize(); const rel = this.artifact.relationship_tables.find((candidate) => candidate.relationship === relationship); if (!rel) throw new Error("artifact " + this.artifact.artifact_id + " has no relationship " + relationship); const table = this.artifact.tables.find((candidate) => candidate.name === rel.table); return this.insertRow(table, { [table.columns[0].name]: this.artifact.artifact_id, [rel.target_column]: targetId, relationship_role: role, cardinality }); }
+  putEvidence(referenceKind, referenceValue, referenceHash = null) { this.initialize(); const table = tableBySuffix(this.artifact, "__evidence_reference"); return this.insertRow(table, { [firstColumn(table)]: this.artifact.artifact_id, reference_kind: referenceKind, reference_value: referenceValue, reference_hash: referenceHash }); }
+  selectReconstructionRows() { const identity = tableBySuffix(this.artifact, "__identity"); return this.executor.all?.("SELECT * FROM " + q(identity.name) + " WHERE " + q(firstColumn(identity)) + " = ?", [this.artifact.artifact_id]) ?? []; }
+  relationNames() { return this.artifact.tables.map((table) => table.name); }
 }
 
-export class DynamoDbArtifactStateAdapter {
-  constructor(manifest, artifact, transport) {
-    this.manifest = manifest;
-    this.artifact = artifact;
-    this.transport = transport;
-    this.spec = artifact.adapters.find((adapter) => adapter.kind === "dynamodb");
-    if (!this.spec) throw new Error("artifact " + artifact.artifact_id + " has no dynamodb adapter");
-  }
-  key() {
-    return { pk: { S: "repo#" + this.manifest.repo_id }, sk: { S: "artifact#" + this.artifact.artifact_id } };
-  }
-  putRequest(payload, metadata = {}) {
-    return { method: "POST", operation: "PutItem", headers: { "x-amz-target": "DynamoDB_20120810.PutItem", "content-type": "application/x-amz-json-1.0" }, body: { TableName: this.spec.table, Item: { ...this.key(), payload_json: { S: JSON.stringify(payload) }, metadata_json: { S: JSON.stringify(metadata) }, updated_at: { S: new Date().toISOString() } } } };
-  }
-  getRequest() {
-    return { method: "POST", operation: "GetItem", headers: { "x-amz-target": "DynamoDB_20120810.GetItem", "content-type": "application/x-amz-json-1.0" }, body: { TableName: this.spec.table, Key: this.key() } };
-  }
-  deleteRequest() {
-    return { method: "POST", operation: "DeleteItem", headers: { "x-amz-target": "DynamoDB_20120810.DeleteItem", "content-type": "application/x-amz-json-1.0" }, body: { TableName: this.spec.table, Key: this.key() } };
-  }
-  put(payload, metadata = {}) { const request = this.putRequest(payload, metadata); return this.transport ? this.transport(request) : request; }
-  get() { const request = this.getRequest(); return this.transport ? this.transport(request) : request; }
-  delete() { const request = this.deleteRequest(); return this.transport ? this.transport(request) : request; }
-}
-
-export class ObjectStorageArtifactAdapter {
-  constructor(kind, manifest, artifact, transport) {
-    if (kind !== "minio" && kind !== "s3") throw new Error("kind must be minio or s3");
-    this.kind = kind;
-    this.manifest = manifest;
-    this.artifact = artifact;
-    this.transport = transport;
-    this.spec = artifact.adapters.find((adapter) => adapter.kind === kind);
-    if (!this.spec) throw new Error("artifact " + artifact.artifact_id + " has no " + kind + " adapter");
-  }
-  objectKey(name, body) {
-    const digest = body === undefined ? name : createHash("sha256").update(body).digest("hex");
-    return this.manifest.repo_id + "/" + this.artifact.artifact_id + "/" + digest;
-  }
-  putRequest(name, body, metadata = {}) {
-    return { method: "PUT", operation: this.kind === "s3" ? "PutObject" : "put_object", url: "/" + String(this.spec.bucket) + "/" + this.objectKey(name, body), headers: { "x-amz-meta-repo-id": this.manifest.repo_id, "x-amz-meta-artifact-id": this.artifact.artifact_id, ...metadata }, body };
-  }
-  getRequest(name) { return { method: "GET", operation: this.kind === "s3" ? "GetObject" : "get_object", url: "/" + String(this.spec.bucket) + "/" + this.objectKey(name), headers: {} }; }
-  deleteRequest(name) { return { method: "DELETE", operation: this.kind === "s3" ? "DeleteObject" : "delete_object", url: "/" + String(this.spec.bucket) + "/" + this.objectKey(name), headers: {} }; }
-  put(name, body, metadata = {}) { const request = this.putRequest(name, body, metadata); return this.transport ? this.transport(request) : request; }
-  get(name) { const request = this.getRequest(name); return this.transport ? this.transport(request) : request; }
-  delete(name) { const request = this.deleteRequest(name); return this.transport ? this.transport(request) : request; }
-}
-
-export function createStorageAdapters(artifactId, options = {}) {
-  const manifest = options.manifest ?? loadStorageAdapterManifest();
-  const artifact = artifactById(manifest, artifactId);
-  if (artifact.classification === "structured state") {
-    return { sqlite: options.sqlite ? new SqliteArtifactStateAdapter(manifest, artifact, options.sqlite) : undefined, dynamodb: new DynamoDbArtifactStateAdapter(manifest, artifact, options.dynamodb) };
-  }
-  return { minio: new ObjectStorageArtifactAdapter("minio", manifest, artifact, options.minio), s3: new ObjectStorageArtifactAdapter("s3", manifest, artifact, options.s3) };
-}
+export class DynamoDbArtifactStateAdapter { constructor(manifest, artifact, transport) { this.manifest = manifest; this.artifact = artifact; this.transport = transport; this.spec = artifact.adapters.find((adapter) => adapter.kind === "dynamodb"); if (!this.spec) throw new Error("artifact " + artifact.artifact_id + " has no dynamodb adapter"); } key() { return { pk: { S: "repo#" + this.manifest.repo_id }, sk: { S: "artifact#" + this.artifact.artifact_id } }; } putRequest(payload, metadata = {}) { return { method: "POST", operation: "PutItem", headers: { "x-amz-target": "DynamoDB_20120810.PutItem", "content-type": "application/x-amz-json-1.0" }, body: { TableName: this.spec.table, Item: { ...this.key(), payload_json: { S: JSON.stringify(payload) }, metadata_json: { S: JSON.stringify(metadata) }, updated_at: { S: new Date().toISOString() } } } }; } getRequest() { return { method: "POST", operation: "GetItem", headers: { "x-amz-target": "DynamoDB_20120810.GetItem", "content-type": "application/x-amz-json-1.0" }, body: { TableName: this.spec.table, Key: this.key() } }; } deleteRequest() { return { method: "POST", operation: "DeleteItem", headers: { "x-amz-target": "DynamoDB_20120810.DeleteItem", "content-type": "application/x-amz-json-1.0" }, body: { TableName: this.spec.table, Key: this.key() } }; } put(payload, metadata = {}) { const request = this.putRequest(payload, metadata); return this.transport ? this.transport(request) : request; } get() { const request = this.getRequest(); return this.transport ? this.transport(request) : request; } delete() { const request = this.deleteRequest(); return this.transport ? this.transport(request) : request; } }
+export class ObjectStorageArtifactAdapter { constructor(kind, manifest, artifact, transport) { if (kind !== "minio" && kind !== "s3") throw new Error("kind must be minio or s3"); this.kind = kind; this.manifest = manifest; this.artifact = artifact; this.transport = transport; this.spec = artifact.adapters.find((adapter) => adapter.kind === kind); if (!this.spec) throw new Error("artifact " + artifact.artifact_id + " has no " + kind + " adapter"); } objectKey(name, body) { const digest = body === undefined ? name : createHash("sha256").update(body).digest("hex"); return this.manifest.repo_id + "/" + this.artifact.artifact_id + "/" + digest; } putRequest(name, body, metadata = {}) { return { method: "PUT", operation: this.kind === "s3" ? "PutObject" : "put_object", url: "/" + String(this.spec.bucket) + "/" + this.objectKey(name, body), headers: { "x-amz-meta-repo-id": this.manifest.repo_id, "x-amz-meta-artifact-id": this.artifact.artifact_id, ...metadata }, body }; } getRequest(name) { return { method: "GET", operation: this.kind === "s3" ? "GetObject" : "get_object", url: "/" + String(this.spec.bucket) + "/" + this.objectKey(name), headers: {} }; } deleteRequest(name) { return { method: "DELETE", operation: this.kind === "s3" ? "DeleteObject" : "delete_object", url: "/" + String(this.spec.bucket) + "/" + this.objectKey(name), headers: {} }; } put(name, body, metadata = {}) { const request = this.putRequest(name, body, metadata); return this.transport ? this.transport(request) : request; } get(name) { const request = this.getRequest(name); return this.transport ? this.transport(request) : request; } delete(name) { const request = this.deleteRequest(name); return this.transport ? this.transport(request) : request; } }
+export function createStorageAdapters(artifactId, options = {}) { const manifest = options.manifest ?? loadStorageAdapterManifest(); const artifact = artifactById(manifest, artifactId); if (artifact.classification === "structured state") { const schema = options.stateSchema ?? loadStateSchema5nf(); return { sqlite: options.sqlite ? SqliteArtifactStateAdapter.fromArtifactId(artifactId, options.sqlite, schema) : undefined, dynamodb: new DynamoDbArtifactStateAdapter(manifest, artifact, options.dynamodb) }; } return { minio: new ObjectStorageArtifactAdapter("minio", manifest, artifact, options.minio), s3: new ObjectStorageArtifactAdapter("s3", manifest, artifact, options.s3) }; }
