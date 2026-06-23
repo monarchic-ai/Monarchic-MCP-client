@@ -1,0 +1,4087 @@
+{
+  "schema": "monarchic.state_schema_5nf.v2",
+  "repo_id": "monarchic-mcp-client",
+  "repo_path": "monarchic-mcp-client/monarchic-mcp-client",
+  "source_catalog": "docs/storage-artifact-catalog.md",
+  "source_catalog_sha256": "a7df6b8fe8fb6097a445b253f224572006cceb199c3e00da0c444df565ba8cd4",
+  "design_rules": [
+    "No table stores a complete artifact payload JSON as the primary state representation.",
+    "No generic EAV field table is used; each inferred atomic fact has its own relation.",
+    "Every relation has a declared candidate key.",
+    "Independent multivalued facts and relationships are represented in separate relations.",
+    "Object/blob artifacts are excluded from relational state except through evidence reference rows.",
+    "Reconstruction views are lossless joins over independent predicates."
+  ],
+  "structured_state_artifact_count": 6,
+  "blob_artifact_count": 1,
+  "blob_artifact_references": [
+    {
+      "source_catalog_row": 6,
+      "surface": "Upstream run artifacts",
+      "classification": "object storage / blob",
+      "reference_policy": "blob bytes remain in object storage; relational schemas may store only hashes, object keys, and evidence references"
+    }
+  ],
+  "structured_state_artifacts": [
+    {
+      "artifact_id": "001_local_stdio_json_rpc_frames",
+      "source_catalog_row": 1,
+      "surface": "Local stdio JSON-RPC frames",
+      "owner": "monarchic-mcp-client",
+      "persistence": "Transient process stream",
+      "notes": "Requests and responses bridged between an MCP host and hosted Monarchic-MCP.",
+      "candidate_key": [
+        "001_local_stdio_json_rpc_frames_id"
+      ],
+      "tables": [
+        {
+          "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+          "purpose": "Artifact identity and catalog binding.",
+          "columns": [
+            {
+              "name": "001_local_stdio_json_rpc_frames_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "surface_name",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "catalog_row_number",
+              "type": "INTEGER",
+              "nullable": false
+            },
+            {
+              "name": "classification",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "001_local_stdio_json_rpc_frames_id"
+          ],
+          "foreign_keys": [],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__catalog_version",
+          "purpose": "Catalog-version provenance independent of artifact contents.",
+          "columns": [
+            {
+              "name": "001_local_stdio_json_rpc_frames_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "catalog_sha256",
+              "type": "TEXT /* digest */",
+              "nullable": false
+            },
+            {
+              "name": "schema_version",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "catalog_sha256"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ],
+              "references": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+              "referenced_columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__owner",
+          "purpose": "Owner assignment independent of persistence and artifact facts.",
+          "columns": [
+            {
+              "name": "001_local_stdio_json_rpc_frames_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "owner_name",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "owner_scope",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "owner_name"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ],
+              "references": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+              "referenced_columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__persistence",
+          "purpose": "Persistence location/pattern independent of owner and facts.",
+          "columns": [
+            {
+              "name": "001_local_stdio_json_rpc_frames_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "persistence_kind",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "location_pattern",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "environment_selector",
+              "type": "TEXT",
+              "nullable": true
+            }
+          ],
+          "primary_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "persistence_kind",
+            "location_pattern"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ],
+              "references": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+              "referenced_columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_stdio",
+          "purpose": "Atomic stdio fact for this artifact.",
+          "columns": [
+            {
+              "name": "001_local_stdio_json_rpc_frames_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "stdio_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "stdio_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ],
+              "references": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+              "referenced_columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_json_rpc",
+          "purpose": "Atomic json_rpc fact for this artifact.",
+          "columns": [
+            {
+              "name": "001_local_stdio_json_rpc_frames_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "json_rpc_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "json_rpc_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ],
+              "references": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+              "referenced_columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_frames",
+          "purpose": "Atomic frames fact for this artifact.",
+          "columns": [
+            {
+              "name": "001_local_stdio_json_rpc_frames_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "frames_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "frames_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ],
+              "references": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+              "referenced_columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_process",
+          "purpose": "Atomic process fact for this artifact.",
+          "columns": [
+            {
+              "name": "001_local_stdio_json_rpc_frames_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "process_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "process_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ],
+              "references": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+              "referenced_columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_stream",
+          "purpose": "Atomic stream fact for this artifact.",
+          "columns": [
+            {
+              "name": "001_local_stdio_json_rpc_frames_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "stream_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "stream_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ],
+              "references": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+              "referenced_columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_requests",
+          "purpose": "Atomic requests fact for this artifact.",
+          "columns": [
+            {
+              "name": "001_local_stdio_json_rpc_frames_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "requests_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "requests_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ],
+              "references": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+              "referenced_columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_responses",
+          "purpose": "Atomic responses fact for this artifact.",
+          "columns": [
+            {
+              "name": "001_local_stdio_json_rpc_frames_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "responses_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "responses_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ],
+              "references": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+              "referenced_columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_bridged",
+          "purpose": "Atomic bridged fact for this artifact.",
+          "columns": [
+            {
+              "name": "001_local_stdio_json_rpc_frames_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "bridged_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "bridged_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ],
+              "references": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+              "referenced_columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_between",
+          "purpose": "Atomic between fact for this artifact.",
+          "columns": [
+            {
+              "name": "001_local_stdio_json_rpc_frames_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "between_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "between_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ],
+              "references": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+              "referenced_columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_host",
+          "purpose": "Atomic host fact for this artifact.",
+          "columns": [
+            {
+              "name": "001_local_stdio_json_rpc_frames_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "host_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "host_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ],
+              "references": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+              "referenced_columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_hosted",
+          "purpose": "Atomic hosted fact for this artifact.",
+          "columns": [
+            {
+              "name": "001_local_stdio_json_rpc_frames_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "hosted_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "hosted_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ],
+              "references": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+              "referenced_columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_monarchic_mcp",
+          "purpose": "Atomic monarchic_mcp fact for this artifact.",
+          "columns": [
+            {
+              "name": "001_local_stdio_json_rpc_frames_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "monarchic_mcp_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "monarchic_mcp_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ],
+              "references": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+              "referenced_columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__evidence_reference",
+          "purpose": "Reference-only evidence relation; bytes and object payloads stay outside relational state.",
+          "columns": [
+            {
+              "name": "001_local_stdio_json_rpc_frames_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_kind",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_hash",
+              "type": "TEXT /* digest */",
+              "nullable": true
+            }
+          ],
+          "primary_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "reference_kind",
+            "reference_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ],
+              "references": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+              "referenced_columns": [
+                "001_local_stdio_json_rpc_frames_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        }
+      ],
+      "atomic_fact_tables": [
+        {
+          "field_name": "stdio",
+          "table": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_stdio",
+          "value_column": "stdio_value",
+          "candidate_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "stdio_value"
+          ]
+        },
+        {
+          "field_name": "json_rpc",
+          "table": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_json_rpc",
+          "value_column": "json_rpc_value",
+          "candidate_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "json_rpc_value"
+          ]
+        },
+        {
+          "field_name": "frames",
+          "table": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_frames",
+          "value_column": "frames_value",
+          "candidate_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "frames_value"
+          ]
+        },
+        {
+          "field_name": "process",
+          "table": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_process",
+          "value_column": "process_value",
+          "candidate_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "process_value"
+          ]
+        },
+        {
+          "field_name": "stream",
+          "table": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_stream",
+          "value_column": "stream_value",
+          "candidate_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "stream_value"
+          ]
+        },
+        {
+          "field_name": "requests",
+          "table": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_requests",
+          "value_column": "requests_value",
+          "candidate_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "requests_value"
+          ]
+        },
+        {
+          "field_name": "responses",
+          "table": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_responses",
+          "value_column": "responses_value",
+          "candidate_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "responses_value"
+          ]
+        },
+        {
+          "field_name": "bridged",
+          "table": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_bridged",
+          "value_column": "bridged_value",
+          "candidate_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "bridged_value"
+          ]
+        },
+        {
+          "field_name": "between",
+          "table": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_between",
+          "value_column": "between_value",
+          "candidate_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "between_value"
+          ]
+        },
+        {
+          "field_name": "host",
+          "table": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_host",
+          "value_column": "host_value",
+          "candidate_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "host_value"
+          ]
+        },
+        {
+          "field_name": "hosted",
+          "table": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_hosted",
+          "value_column": "hosted_value",
+          "candidate_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "hosted_value"
+          ]
+        },
+        {
+          "field_name": "monarchic_mcp",
+          "table": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_monarchic_mcp",
+          "value_column": "monarchic_mcp_value",
+          "candidate_key": [
+            "001_local_stdio_json_rpc_frames_id",
+            "monarchic_mcp_value"
+          ]
+        }
+      ],
+      "relationship_tables": [],
+      "reconstruction_view": {
+        "name": "monarchic_mcp_client__001_local_stdio_json_rpc_frames__reconstruction_v",
+        "lossless_join_tables": [
+          "monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity",
+          "monarchic_mcp_client__001_local_stdio_json_rpc_frames__catalog_version",
+          "monarchic_mcp_client__001_local_stdio_json_rpc_frames__owner",
+          "monarchic_mcp_client__001_local_stdio_json_rpc_frames__persistence",
+          "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_stdio",
+          "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_json_rpc",
+          "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_frames",
+          "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_process",
+          "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_stream",
+          "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_requests",
+          "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_responses",
+          "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_bridged",
+          "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_between",
+          "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_host",
+          "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_hosted",
+          "monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_monarchic_mcp",
+          "monarchic_mcp_client__001_local_stdio_json_rpc_frames__evidence_reference"
+        ],
+        "view_key": [
+          "001_local_stdio_json_rpc_frames_id"
+        ],
+        "note": "Lossless join over identity, catalog version, owner, persistence, each atomic fact relation, relationship relations, and evidence references. No generic EAV table or full artifact JSON table participates."
+      },
+      "sqlite_ddl": [
+        "CREATE TABLE monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity (\n  001_local_stdio_json_rpc_frames_id TEXT NOT NULL,\n  surface_name TEXT NOT NULL,\n  catalog_row_number INTEGER NOT NULL,\n  classification TEXT NOT NULL,\n  PRIMARY KEY (001_local_stdio_json_rpc_frames_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__001_local_stdio_json_rpc_frames__catalog_version (\n  001_local_stdio_json_rpc_frames_id TEXT NOT NULL,\n  catalog_sha256 TEXT /* digest */ NOT NULL,\n  schema_version TEXT NOT NULL,\n  PRIMARY KEY (001_local_stdio_json_rpc_frames_id, catalog_sha256),\n  FOREIGN KEY (001_local_stdio_json_rpc_frames_id) REFERENCES monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity(001_local_stdio_json_rpc_frames_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__001_local_stdio_json_rpc_frames__owner (\n  001_local_stdio_json_rpc_frames_id TEXT NOT NULL,\n  owner_name TEXT NOT NULL,\n  owner_scope TEXT NOT NULL,\n  PRIMARY KEY (001_local_stdio_json_rpc_frames_id, owner_name),\n  FOREIGN KEY (001_local_stdio_json_rpc_frames_id) REFERENCES monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity(001_local_stdio_json_rpc_frames_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__001_local_stdio_json_rpc_frames__persistence (\n  001_local_stdio_json_rpc_frames_id TEXT NOT NULL,\n  persistence_kind TEXT NOT NULL,\n  location_pattern TEXT NOT NULL,\n  environment_selector TEXT,\n  PRIMARY KEY (001_local_stdio_json_rpc_frames_id, persistence_kind, location_pattern),\n  FOREIGN KEY (001_local_stdio_json_rpc_frames_id) REFERENCES monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity(001_local_stdio_json_rpc_frames_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_stdio (\n  001_local_stdio_json_rpc_frames_id TEXT NOT NULL,\n  stdio_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (001_local_stdio_json_rpc_frames_id, stdio_value),\n  FOREIGN KEY (001_local_stdio_json_rpc_frames_id) REFERENCES monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity(001_local_stdio_json_rpc_frames_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_json_rpc (\n  001_local_stdio_json_rpc_frames_id TEXT NOT NULL,\n  json_rpc_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (001_local_stdio_json_rpc_frames_id, json_rpc_value),\n  FOREIGN KEY (001_local_stdio_json_rpc_frames_id) REFERENCES monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity(001_local_stdio_json_rpc_frames_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_frames (\n  001_local_stdio_json_rpc_frames_id TEXT NOT NULL,\n  frames_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (001_local_stdio_json_rpc_frames_id, frames_value),\n  FOREIGN KEY (001_local_stdio_json_rpc_frames_id) REFERENCES monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity(001_local_stdio_json_rpc_frames_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_process (\n  001_local_stdio_json_rpc_frames_id TEXT NOT NULL,\n  process_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (001_local_stdio_json_rpc_frames_id, process_value),\n  FOREIGN KEY (001_local_stdio_json_rpc_frames_id) REFERENCES monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity(001_local_stdio_json_rpc_frames_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_stream (\n  001_local_stdio_json_rpc_frames_id TEXT NOT NULL,\n  stream_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (001_local_stdio_json_rpc_frames_id, stream_value),\n  FOREIGN KEY (001_local_stdio_json_rpc_frames_id) REFERENCES monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity(001_local_stdio_json_rpc_frames_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_requests (\n  001_local_stdio_json_rpc_frames_id TEXT NOT NULL,\n  requests_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (001_local_stdio_json_rpc_frames_id, requests_value),\n  FOREIGN KEY (001_local_stdio_json_rpc_frames_id) REFERENCES monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity(001_local_stdio_json_rpc_frames_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_responses (\n  001_local_stdio_json_rpc_frames_id TEXT NOT NULL,\n  responses_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (001_local_stdio_json_rpc_frames_id, responses_value),\n  FOREIGN KEY (001_local_stdio_json_rpc_frames_id) REFERENCES monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity(001_local_stdio_json_rpc_frames_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_bridged (\n  001_local_stdio_json_rpc_frames_id TEXT NOT NULL,\n  bridged_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (001_local_stdio_json_rpc_frames_id, bridged_value),\n  FOREIGN KEY (001_local_stdio_json_rpc_frames_id) REFERENCES monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity(001_local_stdio_json_rpc_frames_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_between (\n  001_local_stdio_json_rpc_frames_id TEXT NOT NULL,\n  between_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (001_local_stdio_json_rpc_frames_id, between_value),\n  FOREIGN KEY (001_local_stdio_json_rpc_frames_id) REFERENCES monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity(001_local_stdio_json_rpc_frames_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_host (\n  001_local_stdio_json_rpc_frames_id TEXT NOT NULL,\n  host_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (001_local_stdio_json_rpc_frames_id, host_value),\n  FOREIGN KEY (001_local_stdio_json_rpc_frames_id) REFERENCES monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity(001_local_stdio_json_rpc_frames_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_hosted (\n  001_local_stdio_json_rpc_frames_id TEXT NOT NULL,\n  hosted_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (001_local_stdio_json_rpc_frames_id, hosted_value),\n  FOREIGN KEY (001_local_stdio_json_rpc_frames_id) REFERENCES monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity(001_local_stdio_json_rpc_frames_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__001_local_stdio_json_rpc_frames__fact_monarchic_mcp (\n  001_local_stdio_json_rpc_frames_id TEXT NOT NULL,\n  monarchic_mcp_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (001_local_stdio_json_rpc_frames_id, monarchic_mcp_value),\n  FOREIGN KEY (001_local_stdio_json_rpc_frames_id) REFERENCES monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity(001_local_stdio_json_rpc_frames_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__001_local_stdio_json_rpc_frames__evidence_reference (\n  001_local_stdio_json_rpc_frames_id TEXT NOT NULL,\n  reference_kind TEXT NOT NULL,\n  reference_value TEXT NOT NULL,\n  reference_hash TEXT /* digest */,\n  PRIMARY KEY (001_local_stdio_json_rpc_frames_id, reference_kind, reference_value),\n  FOREIGN KEY (001_local_stdio_json_rpc_frames_id) REFERENCES monarchic_mcp_client__001_local_stdio_json_rpc_frames__identity(001_local_stdio_json_rpc_frames_id)\n);"
+      ]
+    },
+    {
+      "artifact_id": "002_env_local",
+      "source_catalog_row": 2,
+      "surface": "`.env.local`",
+      "owner": "Operator",
+      "persistence": "Local config file",
+      "notes": "Local endpoint and token configuration; do not commit populated secrets.",
+      "candidate_key": [
+        "002_env_local_id"
+      ],
+      "tables": [
+        {
+          "name": "monarchic_mcp_client__002_env_local__identity",
+          "purpose": "Artifact identity and catalog binding.",
+          "columns": [
+            {
+              "name": "002_env_local_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "surface_name",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "catalog_row_number",
+              "type": "INTEGER",
+              "nullable": false
+            },
+            {
+              "name": "classification",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "002_env_local_id"
+          ],
+          "foreign_keys": [],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__002_env_local__catalog_version",
+          "purpose": "Catalog-version provenance independent of artifact contents.",
+          "columns": [
+            {
+              "name": "002_env_local_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "catalog_sha256",
+              "type": "TEXT /* digest */",
+              "nullable": false
+            },
+            {
+              "name": "schema_version",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "002_env_local_id",
+            "catalog_sha256"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "002_env_local_id"
+              ],
+              "references": "monarchic_mcp_client__002_env_local__identity",
+              "referenced_columns": [
+                "002_env_local_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__002_env_local__owner",
+          "purpose": "Owner assignment independent of persistence and artifact facts.",
+          "columns": [
+            {
+              "name": "002_env_local_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "owner_name",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "owner_scope",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "002_env_local_id",
+            "owner_name"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "002_env_local_id"
+              ],
+              "references": "monarchic_mcp_client__002_env_local__identity",
+              "referenced_columns": [
+                "002_env_local_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__002_env_local__persistence",
+          "purpose": "Persistence location/pattern independent of owner and facts.",
+          "columns": [
+            {
+              "name": "002_env_local_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "persistence_kind",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "location_pattern",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "environment_selector",
+              "type": "TEXT",
+              "nullable": true
+            }
+          ],
+          "primary_key": [
+            "002_env_local_id",
+            "persistence_kind",
+            "location_pattern"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "002_env_local_id"
+              ],
+              "references": "monarchic_mcp_client__002_env_local__identity",
+              "referenced_columns": [
+                "002_env_local_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__002_env_local__fact_env",
+          "purpose": "Atomic env fact for this artifact.",
+          "columns": [
+            {
+              "name": "002_env_local_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "env_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "002_env_local_id",
+            "env_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "002_env_local_id"
+              ],
+              "references": "monarchic_mcp_client__002_env_local__identity",
+              "referenced_columns": [
+                "002_env_local_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__002_env_local__fact_config",
+          "purpose": "Atomic config fact for this artifact.",
+          "columns": [
+            {
+              "name": "002_env_local_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "config_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "002_env_local_id",
+            "config_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "002_env_local_id"
+              ],
+              "references": "monarchic_mcp_client__002_env_local__identity",
+              "referenced_columns": [
+                "002_env_local_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__002_env_local__fact_endpoint",
+          "purpose": "Atomic endpoint fact for this artifact.",
+          "columns": [
+            {
+              "name": "002_env_local_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "endpoint_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "002_env_local_id",
+            "endpoint_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "002_env_local_id"
+              ],
+              "references": "monarchic_mcp_client__002_env_local__identity",
+              "referenced_columns": [
+                "002_env_local_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__002_env_local__fact_token",
+          "purpose": "Atomic token fact for this artifact.",
+          "columns": [
+            {
+              "name": "002_env_local_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "token_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "002_env_local_id",
+            "token_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "002_env_local_id"
+              ],
+              "references": "monarchic_mcp_client__002_env_local__identity",
+              "referenced_columns": [
+                "002_env_local_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__002_env_local__fact_configuration",
+          "purpose": "Atomic configuration fact for this artifact.",
+          "columns": [
+            {
+              "name": "002_env_local_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "configuration_value",
+              "type": "TEXT /* ISO-8601 */",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "002_env_local_id",
+            "configuration_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "002_env_local_id"
+              ],
+              "references": "monarchic_mcp_client__002_env_local__identity",
+              "referenced_columns": [
+                "002_env_local_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__002_env_local__fact_commit",
+          "purpose": "Atomic commit fact for this artifact.",
+          "columns": [
+            {
+              "name": "002_env_local_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "commit_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "002_env_local_id",
+            "commit_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "002_env_local_id"
+              ],
+              "references": "monarchic_mcp_client__002_env_local__identity",
+              "referenced_columns": [
+                "002_env_local_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__002_env_local__fact_populated",
+          "purpose": "Atomic populated fact for this artifact.",
+          "columns": [
+            {
+              "name": "002_env_local_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "populated_value",
+              "type": "TEXT /* ISO-8601 */",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "002_env_local_id",
+            "populated_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "002_env_local_id"
+              ],
+              "references": "monarchic_mcp_client__002_env_local__identity",
+              "referenced_columns": [
+                "002_env_local_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__002_env_local__fact_secrets",
+          "purpose": "Atomic secrets fact for this artifact.",
+          "columns": [
+            {
+              "name": "002_env_local_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "secrets_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "002_env_local_id",
+            "secrets_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "002_env_local_id"
+              ],
+              "references": "monarchic_mcp_client__002_env_local__identity",
+              "referenced_columns": [
+                "002_env_local_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__002_env_local__evidence_reference",
+          "purpose": "Reference-only evidence relation; bytes and object payloads stay outside relational state.",
+          "columns": [
+            {
+              "name": "002_env_local_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_kind",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_hash",
+              "type": "TEXT /* digest */",
+              "nullable": true
+            }
+          ],
+          "primary_key": [
+            "002_env_local_id",
+            "reference_kind",
+            "reference_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "002_env_local_id"
+              ],
+              "references": "monarchic_mcp_client__002_env_local__identity",
+              "referenced_columns": [
+                "002_env_local_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        }
+      ],
+      "atomic_fact_tables": [
+        {
+          "field_name": "env",
+          "table": "monarchic_mcp_client__002_env_local__fact_env",
+          "value_column": "env_value",
+          "candidate_key": [
+            "002_env_local_id",
+            "env_value"
+          ]
+        },
+        {
+          "field_name": "config",
+          "table": "monarchic_mcp_client__002_env_local__fact_config",
+          "value_column": "config_value",
+          "candidate_key": [
+            "002_env_local_id",
+            "config_value"
+          ]
+        },
+        {
+          "field_name": "endpoint",
+          "table": "monarchic_mcp_client__002_env_local__fact_endpoint",
+          "value_column": "endpoint_value",
+          "candidate_key": [
+            "002_env_local_id",
+            "endpoint_value"
+          ]
+        },
+        {
+          "field_name": "token",
+          "table": "monarchic_mcp_client__002_env_local__fact_token",
+          "value_column": "token_value",
+          "candidate_key": [
+            "002_env_local_id",
+            "token_value"
+          ]
+        },
+        {
+          "field_name": "configuration",
+          "table": "monarchic_mcp_client__002_env_local__fact_configuration",
+          "value_column": "configuration_value",
+          "candidate_key": [
+            "002_env_local_id",
+            "configuration_value"
+          ]
+        },
+        {
+          "field_name": "commit",
+          "table": "monarchic_mcp_client__002_env_local__fact_commit",
+          "value_column": "commit_value",
+          "candidate_key": [
+            "002_env_local_id",
+            "commit_value"
+          ]
+        },
+        {
+          "field_name": "populated",
+          "table": "monarchic_mcp_client__002_env_local__fact_populated",
+          "value_column": "populated_value",
+          "candidate_key": [
+            "002_env_local_id",
+            "populated_value"
+          ]
+        },
+        {
+          "field_name": "secrets",
+          "table": "monarchic_mcp_client__002_env_local__fact_secrets",
+          "value_column": "secrets_value",
+          "candidate_key": [
+            "002_env_local_id",
+            "secrets_value"
+          ]
+        }
+      ],
+      "relationship_tables": [],
+      "reconstruction_view": {
+        "name": "monarchic_mcp_client__002_env_local__reconstruction_v",
+        "lossless_join_tables": [
+          "monarchic_mcp_client__002_env_local__identity",
+          "monarchic_mcp_client__002_env_local__catalog_version",
+          "monarchic_mcp_client__002_env_local__owner",
+          "monarchic_mcp_client__002_env_local__persistence",
+          "monarchic_mcp_client__002_env_local__fact_env",
+          "monarchic_mcp_client__002_env_local__fact_config",
+          "monarchic_mcp_client__002_env_local__fact_endpoint",
+          "monarchic_mcp_client__002_env_local__fact_token",
+          "monarchic_mcp_client__002_env_local__fact_configuration",
+          "monarchic_mcp_client__002_env_local__fact_commit",
+          "monarchic_mcp_client__002_env_local__fact_populated",
+          "monarchic_mcp_client__002_env_local__fact_secrets",
+          "monarchic_mcp_client__002_env_local__evidence_reference"
+        ],
+        "view_key": [
+          "002_env_local_id"
+        ],
+        "note": "Lossless join over identity, catalog version, owner, persistence, each atomic fact relation, relationship relations, and evidence references. No generic EAV table or full artifact JSON table participates."
+      },
+      "sqlite_ddl": [
+        "CREATE TABLE monarchic_mcp_client__002_env_local__identity (\n  002_env_local_id TEXT NOT NULL,\n  surface_name TEXT NOT NULL,\n  catalog_row_number INTEGER NOT NULL,\n  classification TEXT NOT NULL,\n  PRIMARY KEY (002_env_local_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__002_env_local__catalog_version (\n  002_env_local_id TEXT NOT NULL,\n  catalog_sha256 TEXT /* digest */ NOT NULL,\n  schema_version TEXT NOT NULL,\n  PRIMARY KEY (002_env_local_id, catalog_sha256),\n  FOREIGN KEY (002_env_local_id) REFERENCES monarchic_mcp_client__002_env_local__identity(002_env_local_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__002_env_local__owner (\n  002_env_local_id TEXT NOT NULL,\n  owner_name TEXT NOT NULL,\n  owner_scope TEXT NOT NULL,\n  PRIMARY KEY (002_env_local_id, owner_name),\n  FOREIGN KEY (002_env_local_id) REFERENCES monarchic_mcp_client__002_env_local__identity(002_env_local_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__002_env_local__persistence (\n  002_env_local_id TEXT NOT NULL,\n  persistence_kind TEXT NOT NULL,\n  location_pattern TEXT NOT NULL,\n  environment_selector TEXT,\n  PRIMARY KEY (002_env_local_id, persistence_kind, location_pattern),\n  FOREIGN KEY (002_env_local_id) REFERENCES monarchic_mcp_client__002_env_local__identity(002_env_local_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__002_env_local__fact_env (\n  002_env_local_id TEXT NOT NULL,\n  env_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (002_env_local_id, env_value),\n  FOREIGN KEY (002_env_local_id) REFERENCES monarchic_mcp_client__002_env_local__identity(002_env_local_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__002_env_local__fact_config (\n  002_env_local_id TEXT NOT NULL,\n  config_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (002_env_local_id, config_value),\n  FOREIGN KEY (002_env_local_id) REFERENCES monarchic_mcp_client__002_env_local__identity(002_env_local_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__002_env_local__fact_endpoint (\n  002_env_local_id TEXT NOT NULL,\n  endpoint_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (002_env_local_id, endpoint_value),\n  FOREIGN KEY (002_env_local_id) REFERENCES monarchic_mcp_client__002_env_local__identity(002_env_local_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__002_env_local__fact_token (\n  002_env_local_id TEXT NOT NULL,\n  token_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (002_env_local_id, token_value),\n  FOREIGN KEY (002_env_local_id) REFERENCES monarchic_mcp_client__002_env_local__identity(002_env_local_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__002_env_local__fact_configuration (\n  002_env_local_id TEXT NOT NULL,\n  configuration_value TEXT /* ISO-8601 */ NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (002_env_local_id, configuration_value),\n  FOREIGN KEY (002_env_local_id) REFERENCES monarchic_mcp_client__002_env_local__identity(002_env_local_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__002_env_local__fact_commit (\n  002_env_local_id TEXT NOT NULL,\n  commit_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (002_env_local_id, commit_value),\n  FOREIGN KEY (002_env_local_id) REFERENCES monarchic_mcp_client__002_env_local__identity(002_env_local_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__002_env_local__fact_populated (\n  002_env_local_id TEXT NOT NULL,\n  populated_value TEXT /* ISO-8601 */ NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (002_env_local_id, populated_value),\n  FOREIGN KEY (002_env_local_id) REFERENCES monarchic_mcp_client__002_env_local__identity(002_env_local_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__002_env_local__fact_secrets (\n  002_env_local_id TEXT NOT NULL,\n  secrets_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (002_env_local_id, secrets_value),\n  FOREIGN KEY (002_env_local_id) REFERENCES monarchic_mcp_client__002_env_local__identity(002_env_local_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__002_env_local__evidence_reference (\n  002_env_local_id TEXT NOT NULL,\n  reference_kind TEXT NOT NULL,\n  reference_value TEXT NOT NULL,\n  reference_hash TEXT /* digest */,\n  PRIMARY KEY (002_env_local_id, reference_kind, reference_value),\n  FOREIGN KEY (002_env_local_id) REFERENCES monarchic_mcp_client__002_env_local__identity(002_env_local_id)\n);"
+      ]
+    },
+    {
+      "artifact_id": "003_hosted_mcp_endpoint_url_and_token_environment",
+      "source_catalog_row": 3,
+      "surface": "Hosted MCP endpoint URL and token environment",
+      "owner": "Operator",
+      "persistence": "Environment/config",
+      "notes": "Runtime configuration.",
+      "candidate_key": [
+        "003_hosted_mcp_endpoint_url_and_token_environment_id"
+      ],
+      "tables": [
+        {
+          "name": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity",
+          "purpose": "Artifact identity and catalog binding.",
+          "columns": [
+            {
+              "name": "003_hosted_mcp_endpoint_url_and_token_environment_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "surface_name",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "catalog_row_number",
+              "type": "INTEGER",
+              "nullable": false
+            },
+            {
+              "name": "classification",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id"
+          ],
+          "foreign_keys": [],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__catalog_version",
+          "purpose": "Catalog-version provenance independent of artifact contents.",
+          "columns": [
+            {
+              "name": "003_hosted_mcp_endpoint_url_and_token_environment_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "catalog_sha256",
+              "type": "TEXT /* digest */",
+              "nullable": false
+            },
+            {
+              "name": "schema_version",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "catalog_sha256"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ],
+              "references": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity",
+              "referenced_columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__owner",
+          "purpose": "Owner assignment independent of persistence and artifact facts.",
+          "columns": [
+            {
+              "name": "003_hosted_mcp_endpoint_url_and_token_environment_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "owner_name",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "owner_scope",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "owner_name"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ],
+              "references": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity",
+              "referenced_columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__persistence",
+          "purpose": "Persistence location/pattern independent of owner and facts.",
+          "columns": [
+            {
+              "name": "003_hosted_mcp_endpoint_url_and_token_environment_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "persistence_kind",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "location_pattern",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "environment_selector",
+              "type": "TEXT",
+              "nullable": true
+            }
+          ],
+          "primary_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "persistence_kind",
+            "location_pattern"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ],
+              "references": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity",
+              "referenced_columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_hosted",
+          "purpose": "Atomic hosted fact for this artifact.",
+          "columns": [
+            {
+              "name": "003_hosted_mcp_endpoint_url_and_token_environment_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "hosted_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "hosted_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ],
+              "references": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity",
+              "referenced_columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_endpoint",
+          "purpose": "Atomic endpoint fact for this artifact.",
+          "columns": [
+            {
+              "name": "003_hosted_mcp_endpoint_url_and_token_environment_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "endpoint_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "endpoint_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ],
+              "references": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity",
+              "referenced_columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_url",
+          "purpose": "Atomic url fact for this artifact.",
+          "columns": [
+            {
+              "name": "003_hosted_mcp_endpoint_url_and_token_environment_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "url_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "url_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ],
+              "references": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity",
+              "referenced_columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_token",
+          "purpose": "Atomic token fact for this artifact.",
+          "columns": [
+            {
+              "name": "003_hosted_mcp_endpoint_url_and_token_environment_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "token_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "token_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ],
+              "references": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity",
+              "referenced_columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_environment",
+          "purpose": "Atomic environment fact for this artifact.",
+          "columns": [
+            {
+              "name": "003_hosted_mcp_endpoint_url_and_token_environment_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "environment_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "environment_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ],
+              "references": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity",
+              "referenced_columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_config",
+          "purpose": "Atomic config fact for this artifact.",
+          "columns": [
+            {
+              "name": "003_hosted_mcp_endpoint_url_and_token_environment_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "config_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "config_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ],
+              "references": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity",
+              "referenced_columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_configuration",
+          "purpose": "Atomic configuration fact for this artifact.",
+          "columns": [
+            {
+              "name": "003_hosted_mcp_endpoint_url_and_token_environment_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "configuration_value",
+              "type": "TEXT /* ISO-8601 */",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "configuration_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ],
+              "references": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity",
+              "referenced_columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__evidence_reference",
+          "purpose": "Reference-only evidence relation; bytes and object payloads stay outside relational state.",
+          "columns": [
+            {
+              "name": "003_hosted_mcp_endpoint_url_and_token_environment_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_kind",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_hash",
+              "type": "TEXT /* digest */",
+              "nullable": true
+            }
+          ],
+          "primary_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "reference_kind",
+            "reference_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ],
+              "references": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity",
+              "referenced_columns": [
+                "003_hosted_mcp_endpoint_url_and_token_environment_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        }
+      ],
+      "atomic_fact_tables": [
+        {
+          "field_name": "hosted",
+          "table": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_hosted",
+          "value_column": "hosted_value",
+          "candidate_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "hosted_value"
+          ]
+        },
+        {
+          "field_name": "endpoint",
+          "table": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_endpoint",
+          "value_column": "endpoint_value",
+          "candidate_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "endpoint_value"
+          ]
+        },
+        {
+          "field_name": "url",
+          "table": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_url",
+          "value_column": "url_value",
+          "candidate_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "url_value"
+          ]
+        },
+        {
+          "field_name": "token",
+          "table": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_token",
+          "value_column": "token_value",
+          "candidate_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "token_value"
+          ]
+        },
+        {
+          "field_name": "environment",
+          "table": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_environment",
+          "value_column": "environment_value",
+          "candidate_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "environment_value"
+          ]
+        },
+        {
+          "field_name": "config",
+          "table": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_config",
+          "value_column": "config_value",
+          "candidate_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "config_value"
+          ]
+        },
+        {
+          "field_name": "configuration",
+          "table": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_configuration",
+          "value_column": "configuration_value",
+          "candidate_key": [
+            "003_hosted_mcp_endpoint_url_and_token_environment_id",
+            "configuration_value"
+          ]
+        }
+      ],
+      "relationship_tables": [],
+      "reconstruction_view": {
+        "name": "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__reconstruction_v",
+        "lossless_join_tables": [
+          "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity",
+          "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__catalog_version",
+          "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__owner",
+          "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__persistence",
+          "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_hosted",
+          "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_endpoint",
+          "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_url",
+          "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_token",
+          "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_environment",
+          "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_config",
+          "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_configuration",
+          "monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__evidence_reference"
+        ],
+        "view_key": [
+          "003_hosted_mcp_endpoint_url_and_token_environment_id"
+        ],
+        "note": "Lossless join over identity, catalog version, owner, persistence, each atomic fact relation, relationship relations, and evidence references. No generic EAV table or full artifact JSON table participates."
+      },
+      "sqlite_ddl": [
+        "CREATE TABLE monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity (\n  003_hosted_mcp_endpoint_url_and_token_environment_id TEXT NOT NULL,\n  surface_name TEXT NOT NULL,\n  catalog_row_number INTEGER NOT NULL,\n  classification TEXT NOT NULL,\n  PRIMARY KEY (003_hosted_mcp_endpoint_url_and_token_environment_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__catalog_version (\n  003_hosted_mcp_endpoint_url_and_token_environment_id TEXT NOT NULL,\n  catalog_sha256 TEXT /* digest */ NOT NULL,\n  schema_version TEXT NOT NULL,\n  PRIMARY KEY (003_hosted_mcp_endpoint_url_and_token_environment_id, catalog_sha256),\n  FOREIGN KEY (003_hosted_mcp_endpoint_url_and_token_environment_id) REFERENCES monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity(003_hosted_mcp_endpoint_url_and_token_environment_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__owner (\n  003_hosted_mcp_endpoint_url_and_token_environment_id TEXT NOT NULL,\n  owner_name TEXT NOT NULL,\n  owner_scope TEXT NOT NULL,\n  PRIMARY KEY (003_hosted_mcp_endpoint_url_and_token_environment_id, owner_name),\n  FOREIGN KEY (003_hosted_mcp_endpoint_url_and_token_environment_id) REFERENCES monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity(003_hosted_mcp_endpoint_url_and_token_environment_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__persistence (\n  003_hosted_mcp_endpoint_url_and_token_environment_id TEXT NOT NULL,\n  persistence_kind TEXT NOT NULL,\n  location_pattern TEXT NOT NULL,\n  environment_selector TEXT,\n  PRIMARY KEY (003_hosted_mcp_endpoint_url_and_token_environment_id, persistence_kind, location_pattern),\n  FOREIGN KEY (003_hosted_mcp_endpoint_url_and_token_environment_id) REFERENCES monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity(003_hosted_mcp_endpoint_url_and_token_environment_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_hosted (\n  003_hosted_mcp_endpoint_url_and_token_environment_id TEXT NOT NULL,\n  hosted_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (003_hosted_mcp_endpoint_url_and_token_environment_id, hosted_value),\n  FOREIGN KEY (003_hosted_mcp_endpoint_url_and_token_environment_id) REFERENCES monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity(003_hosted_mcp_endpoint_url_and_token_environment_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_endpoint (\n  003_hosted_mcp_endpoint_url_and_token_environment_id TEXT NOT NULL,\n  endpoint_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (003_hosted_mcp_endpoint_url_and_token_environment_id, endpoint_value),\n  FOREIGN KEY (003_hosted_mcp_endpoint_url_and_token_environment_id) REFERENCES monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity(003_hosted_mcp_endpoint_url_and_token_environment_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_url (\n  003_hosted_mcp_endpoint_url_and_token_environment_id TEXT NOT NULL,\n  url_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (003_hosted_mcp_endpoint_url_and_token_environment_id, url_value),\n  FOREIGN KEY (003_hosted_mcp_endpoint_url_and_token_environment_id) REFERENCES monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity(003_hosted_mcp_endpoint_url_and_token_environment_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_token (\n  003_hosted_mcp_endpoint_url_and_token_environment_id TEXT NOT NULL,\n  token_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (003_hosted_mcp_endpoint_url_and_token_environment_id, token_value),\n  FOREIGN KEY (003_hosted_mcp_endpoint_url_and_token_environment_id) REFERENCES monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity(003_hosted_mcp_endpoint_url_and_token_environment_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_environment (\n  003_hosted_mcp_endpoint_url_and_token_environment_id TEXT NOT NULL,\n  environment_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (003_hosted_mcp_endpoint_url_and_token_environment_id, environment_value),\n  FOREIGN KEY (003_hosted_mcp_endpoint_url_and_token_environment_id) REFERENCES monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity(003_hosted_mcp_endpoint_url_and_token_environment_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_config (\n  003_hosted_mcp_endpoint_url_and_token_environment_id TEXT NOT NULL,\n  config_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (003_hosted_mcp_endpoint_url_and_token_environment_id, config_value),\n  FOREIGN KEY (003_hosted_mcp_endpoint_url_and_token_environment_id) REFERENCES monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity(003_hosted_mcp_endpoint_url_and_token_environment_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__fact_configuration (\n  003_hosted_mcp_endpoint_url_and_token_environment_id TEXT NOT NULL,\n  configuration_value TEXT /* ISO-8601 */ NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (003_hosted_mcp_endpoint_url_and_token_environment_id, configuration_value),\n  FOREIGN KEY (003_hosted_mcp_endpoint_url_and_token_environment_id) REFERENCES monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity(003_hosted_mcp_endpoint_url_and_token_environment_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__evidence_reference (\n  003_hosted_mcp_endpoint_url_and_token_environment_id TEXT NOT NULL,\n  reference_kind TEXT NOT NULL,\n  reference_value TEXT NOT NULL,\n  reference_hash TEXT /* digest */,\n  PRIMARY KEY (003_hosted_mcp_endpoint_url_and_token_environment_id, reference_kind, reference_value),\n  FOREIGN KEY (003_hosted_mcp_endpoint_url_and_token_environment_id) REFERENCES monarchic_mcp_client__003_hosted_mcp_endpoint_url_and_token_environment__identity(003_hosted_mcp_endpoint_url_and_token_environment_id)\n);"
+      ]
+    },
+    {
+      "artifact_id": "004_smoke_test_request_response_payloads",
+      "source_catalog_row": 4,
+      "surface": "Smoke test request/response payloads",
+      "owner": "Client shim tests",
+      "persistence": "Transient process payload",
+      "notes": "Used to verify hosted MCP connectivity.",
+      "candidate_key": [
+        "004_smoke_test_request_response_payloads_id"
+      ],
+      "tables": [
+        {
+          "name": "monarchic_mcp_client__004_smoke_test_request_response_payloads__identity",
+          "purpose": "Artifact identity and catalog binding.",
+          "columns": [
+            {
+              "name": "004_smoke_test_request_response_payloads_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "surface_name",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "catalog_row_number",
+              "type": "INTEGER",
+              "nullable": false
+            },
+            {
+              "name": "classification",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "004_smoke_test_request_response_payloads_id"
+          ],
+          "foreign_keys": [],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__004_smoke_test_request_response_payloads__catalog_version",
+          "purpose": "Catalog-version provenance independent of artifact contents.",
+          "columns": [
+            {
+              "name": "004_smoke_test_request_response_payloads_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "catalog_sha256",
+              "type": "TEXT /* digest */",
+              "nullable": false
+            },
+            {
+              "name": "schema_version",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "catalog_sha256"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ],
+              "references": "monarchic_mcp_client__004_smoke_test_request_response_payloads__identity",
+              "referenced_columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__004_smoke_test_request_response_payloads__owner",
+          "purpose": "Owner assignment independent of persistence and artifact facts.",
+          "columns": [
+            {
+              "name": "004_smoke_test_request_response_payloads_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "owner_name",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "owner_scope",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "owner_name"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ],
+              "references": "monarchic_mcp_client__004_smoke_test_request_response_payloads__identity",
+              "referenced_columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__004_smoke_test_request_response_payloads__persistence",
+          "purpose": "Persistence location/pattern independent of owner and facts.",
+          "columns": [
+            {
+              "name": "004_smoke_test_request_response_payloads_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "persistence_kind",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "location_pattern",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "environment_selector",
+              "type": "TEXT",
+              "nullable": true
+            }
+          ],
+          "primary_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "persistence_kind",
+            "location_pattern"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ],
+              "references": "monarchic_mcp_client__004_smoke_test_request_response_payloads__identity",
+              "referenced_columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_smoke",
+          "purpose": "Atomic smoke fact for this artifact.",
+          "columns": [
+            {
+              "name": "004_smoke_test_request_response_payloads_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "smoke_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "smoke_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ],
+              "references": "monarchic_mcp_client__004_smoke_test_request_response_payloads__identity",
+              "referenced_columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_test",
+          "purpose": "Atomic test fact for this artifact.",
+          "columns": [
+            {
+              "name": "004_smoke_test_request_response_payloads_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "test_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "test_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ],
+              "references": "monarchic_mcp_client__004_smoke_test_request_response_payloads__identity",
+              "referenced_columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_payloads",
+          "purpose": "Atomic payloads fact for this artifact.",
+          "columns": [
+            {
+              "name": "004_smoke_test_request_response_payloads_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "payloads_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "payloads_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ],
+              "references": "monarchic_mcp_client__004_smoke_test_request_response_payloads__identity",
+              "referenced_columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_process",
+          "purpose": "Atomic process fact for this artifact.",
+          "columns": [
+            {
+              "name": "004_smoke_test_request_response_payloads_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "process_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "process_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ],
+              "references": "monarchic_mcp_client__004_smoke_test_request_response_payloads__identity",
+              "referenced_columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_verify",
+          "purpose": "Atomic verify fact for this artifact.",
+          "columns": [
+            {
+              "name": "004_smoke_test_request_response_payloads_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "verify_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "verify_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ],
+              "references": "monarchic_mcp_client__004_smoke_test_request_response_payloads__identity",
+              "referenced_columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_hosted",
+          "purpose": "Atomic hosted fact for this artifact.",
+          "columns": [
+            {
+              "name": "004_smoke_test_request_response_payloads_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "hosted_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "hosted_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ],
+              "references": "monarchic_mcp_client__004_smoke_test_request_response_payloads__identity",
+              "referenced_columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_connectivity",
+          "purpose": "Atomic connectivity fact for this artifact.",
+          "columns": [
+            {
+              "name": "004_smoke_test_request_response_payloads_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "connectivity_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "connectivity_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ],
+              "references": "monarchic_mcp_client__004_smoke_test_request_response_payloads__identity",
+              "referenced_columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__004_smoke_test_request_response_payloads__evidence_reference",
+          "purpose": "Reference-only evidence relation; bytes and object payloads stay outside relational state.",
+          "columns": [
+            {
+              "name": "004_smoke_test_request_response_payloads_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_kind",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_hash",
+              "type": "TEXT /* digest */",
+              "nullable": true
+            }
+          ],
+          "primary_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "reference_kind",
+            "reference_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ],
+              "references": "monarchic_mcp_client__004_smoke_test_request_response_payloads__identity",
+              "referenced_columns": [
+                "004_smoke_test_request_response_payloads_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        }
+      ],
+      "atomic_fact_tables": [
+        {
+          "field_name": "smoke",
+          "table": "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_smoke",
+          "value_column": "smoke_value",
+          "candidate_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "smoke_value"
+          ]
+        },
+        {
+          "field_name": "test",
+          "table": "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_test",
+          "value_column": "test_value",
+          "candidate_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "test_value"
+          ]
+        },
+        {
+          "field_name": "payloads",
+          "table": "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_payloads",
+          "value_column": "payloads_value",
+          "candidate_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "payloads_value"
+          ]
+        },
+        {
+          "field_name": "process",
+          "table": "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_process",
+          "value_column": "process_value",
+          "candidate_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "process_value"
+          ]
+        },
+        {
+          "field_name": "verify",
+          "table": "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_verify",
+          "value_column": "verify_value",
+          "candidate_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "verify_value"
+          ]
+        },
+        {
+          "field_name": "hosted",
+          "table": "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_hosted",
+          "value_column": "hosted_value",
+          "candidate_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "hosted_value"
+          ]
+        },
+        {
+          "field_name": "connectivity",
+          "table": "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_connectivity",
+          "value_column": "connectivity_value",
+          "candidate_key": [
+            "004_smoke_test_request_response_payloads_id",
+            "connectivity_value"
+          ]
+        }
+      ],
+      "relationship_tables": [],
+      "reconstruction_view": {
+        "name": "monarchic_mcp_client__004_smoke_test_request_response_payloads__reconstruction_v",
+        "lossless_join_tables": [
+          "monarchic_mcp_client__004_smoke_test_request_response_payloads__identity",
+          "monarchic_mcp_client__004_smoke_test_request_response_payloads__catalog_version",
+          "monarchic_mcp_client__004_smoke_test_request_response_payloads__owner",
+          "monarchic_mcp_client__004_smoke_test_request_response_payloads__persistence",
+          "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_smoke",
+          "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_test",
+          "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_payloads",
+          "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_process",
+          "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_verify",
+          "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_hosted",
+          "monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_connectivity",
+          "monarchic_mcp_client__004_smoke_test_request_response_payloads__evidence_reference"
+        ],
+        "view_key": [
+          "004_smoke_test_request_response_payloads_id"
+        ],
+        "note": "Lossless join over identity, catalog version, owner, persistence, each atomic fact relation, relationship relations, and evidence references. No generic EAV table or full artifact JSON table participates."
+      },
+      "sqlite_ddl": [
+        "CREATE TABLE monarchic_mcp_client__004_smoke_test_request_response_payloads__identity (\n  004_smoke_test_request_response_payloads_id TEXT NOT NULL,\n  surface_name TEXT NOT NULL,\n  catalog_row_number INTEGER NOT NULL,\n  classification TEXT NOT NULL,\n  PRIMARY KEY (004_smoke_test_request_response_payloads_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__004_smoke_test_request_response_payloads__catalog_version (\n  004_smoke_test_request_response_payloads_id TEXT NOT NULL,\n  catalog_sha256 TEXT /* digest */ NOT NULL,\n  schema_version TEXT NOT NULL,\n  PRIMARY KEY (004_smoke_test_request_response_payloads_id, catalog_sha256),\n  FOREIGN KEY (004_smoke_test_request_response_payloads_id) REFERENCES monarchic_mcp_client__004_smoke_test_request_response_payloads__identity(004_smoke_test_request_response_payloads_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__004_smoke_test_request_response_payloads__owner (\n  004_smoke_test_request_response_payloads_id TEXT NOT NULL,\n  owner_name TEXT NOT NULL,\n  owner_scope TEXT NOT NULL,\n  PRIMARY KEY (004_smoke_test_request_response_payloads_id, owner_name),\n  FOREIGN KEY (004_smoke_test_request_response_payloads_id) REFERENCES monarchic_mcp_client__004_smoke_test_request_response_payloads__identity(004_smoke_test_request_response_payloads_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__004_smoke_test_request_response_payloads__persistence (\n  004_smoke_test_request_response_payloads_id TEXT NOT NULL,\n  persistence_kind TEXT NOT NULL,\n  location_pattern TEXT NOT NULL,\n  environment_selector TEXT,\n  PRIMARY KEY (004_smoke_test_request_response_payloads_id, persistence_kind, location_pattern),\n  FOREIGN KEY (004_smoke_test_request_response_payloads_id) REFERENCES monarchic_mcp_client__004_smoke_test_request_response_payloads__identity(004_smoke_test_request_response_payloads_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_smoke (\n  004_smoke_test_request_response_payloads_id TEXT NOT NULL,\n  smoke_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (004_smoke_test_request_response_payloads_id, smoke_value),\n  FOREIGN KEY (004_smoke_test_request_response_payloads_id) REFERENCES monarchic_mcp_client__004_smoke_test_request_response_payloads__identity(004_smoke_test_request_response_payloads_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_test (\n  004_smoke_test_request_response_payloads_id TEXT NOT NULL,\n  test_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (004_smoke_test_request_response_payloads_id, test_value),\n  FOREIGN KEY (004_smoke_test_request_response_payloads_id) REFERENCES monarchic_mcp_client__004_smoke_test_request_response_payloads__identity(004_smoke_test_request_response_payloads_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_payloads (\n  004_smoke_test_request_response_payloads_id TEXT NOT NULL,\n  payloads_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (004_smoke_test_request_response_payloads_id, payloads_value),\n  FOREIGN KEY (004_smoke_test_request_response_payloads_id) REFERENCES monarchic_mcp_client__004_smoke_test_request_response_payloads__identity(004_smoke_test_request_response_payloads_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_process (\n  004_smoke_test_request_response_payloads_id TEXT NOT NULL,\n  process_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (004_smoke_test_request_response_payloads_id, process_value),\n  FOREIGN KEY (004_smoke_test_request_response_payloads_id) REFERENCES monarchic_mcp_client__004_smoke_test_request_response_payloads__identity(004_smoke_test_request_response_payloads_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_verify (\n  004_smoke_test_request_response_payloads_id TEXT NOT NULL,\n  verify_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (004_smoke_test_request_response_payloads_id, verify_value),\n  FOREIGN KEY (004_smoke_test_request_response_payloads_id) REFERENCES monarchic_mcp_client__004_smoke_test_request_response_payloads__identity(004_smoke_test_request_response_payloads_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_hosted (\n  004_smoke_test_request_response_payloads_id TEXT NOT NULL,\n  hosted_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (004_smoke_test_request_response_payloads_id, hosted_value),\n  FOREIGN KEY (004_smoke_test_request_response_payloads_id) REFERENCES monarchic_mcp_client__004_smoke_test_request_response_payloads__identity(004_smoke_test_request_response_payloads_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__004_smoke_test_request_response_payloads__fact_connectivity (\n  004_smoke_test_request_response_payloads_id TEXT NOT NULL,\n  connectivity_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (004_smoke_test_request_response_payloads_id, connectivity_value),\n  FOREIGN KEY (004_smoke_test_request_response_payloads_id) REFERENCES monarchic_mcp_client__004_smoke_test_request_response_payloads__identity(004_smoke_test_request_response_payloads_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__004_smoke_test_request_response_payloads__evidence_reference (\n  004_smoke_test_request_response_payloads_id TEXT NOT NULL,\n  reference_kind TEXT NOT NULL,\n  reference_value TEXT NOT NULL,\n  reference_hash TEXT /* digest */,\n  PRIMARY KEY (004_smoke_test_request_response_payloads_id, reference_kind, reference_value),\n  FOREIGN KEY (004_smoke_test_request_response_payloads_id) REFERENCES monarchic_mcp_client__004_smoke_test_request_response_payloads__identity(004_smoke_test_request_response_payloads_id)\n);"
+      ]
+    },
+    {
+      "artifact_id": "005_upstream_run_summaries_and_receipts",
+      "source_catalog_row": 5,
+      "surface": "Upstream run summaries and receipts",
+      "owner": "Hosted Monarchic-MCP/API",
+      "persistence": "Remote response/artifact",
+      "notes": "Durable run state belongs to Monarchic infrastructure.",
+      "candidate_key": [
+        "005_upstream_run_summaries_and_receipts_id"
+      ],
+      "tables": [
+        {
+          "name": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity",
+          "purpose": "Artifact identity and catalog binding.",
+          "columns": [
+            {
+              "name": "005_upstream_run_summaries_and_receipts_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "surface_name",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "catalog_row_number",
+              "type": "INTEGER",
+              "nullable": false
+            },
+            {
+              "name": "classification",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "005_upstream_run_summaries_and_receipts_id"
+          ],
+          "foreign_keys": [],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__catalog_version",
+          "purpose": "Catalog-version provenance independent of artifact contents.",
+          "columns": [
+            {
+              "name": "005_upstream_run_summaries_and_receipts_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "catalog_sha256",
+              "type": "TEXT /* digest */",
+              "nullable": false
+            },
+            {
+              "name": "schema_version",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "catalog_sha256"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ],
+              "references": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity",
+              "referenced_columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__owner",
+          "purpose": "Owner assignment independent of persistence and artifact facts.",
+          "columns": [
+            {
+              "name": "005_upstream_run_summaries_and_receipts_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "owner_name",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "owner_scope",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "owner_name"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ],
+              "references": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity",
+              "referenced_columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__persistence",
+          "purpose": "Persistence location/pattern independent of owner and facts.",
+          "columns": [
+            {
+              "name": "005_upstream_run_summaries_and_receipts_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "persistence_kind",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "location_pattern",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "environment_selector",
+              "type": "TEXT",
+              "nullable": true
+            }
+          ],
+          "primary_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "persistence_kind",
+            "location_pattern"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ],
+              "references": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity",
+              "referenced_columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_upstream",
+          "purpose": "Atomic upstream fact for this artifact.",
+          "columns": [
+            {
+              "name": "005_upstream_run_summaries_and_receipts_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "upstream_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "upstream_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ],
+              "references": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity",
+              "referenced_columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_run",
+          "purpose": "Atomic run fact for this artifact.",
+          "columns": [
+            {
+              "name": "005_upstream_run_summaries_and_receipts_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "run_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "run_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ],
+              "references": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity",
+              "referenced_columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_summaries",
+          "purpose": "Atomic summaries fact for this artifact.",
+          "columns": [
+            {
+              "name": "005_upstream_run_summaries_and_receipts_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "summaries_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "summaries_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ],
+              "references": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity",
+              "referenced_columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_receipts",
+          "purpose": "Atomic receipts fact for this artifact.",
+          "columns": [
+            {
+              "name": "005_upstream_run_summaries_and_receipts_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "receipts_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "receipts_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ],
+              "references": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity",
+              "referenced_columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_remote",
+          "purpose": "Atomic remote fact for this artifact.",
+          "columns": [
+            {
+              "name": "005_upstream_run_summaries_and_receipts_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "remote_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "remote_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ],
+              "references": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity",
+              "referenced_columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_durable",
+          "purpose": "Atomic durable fact for this artifact.",
+          "columns": [
+            {
+              "name": "005_upstream_run_summaries_and_receipts_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "durable_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "durable_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ],
+              "references": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity",
+              "referenced_columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_belongs",
+          "purpose": "Atomic belongs fact for this artifact.",
+          "columns": [
+            {
+              "name": "005_upstream_run_summaries_and_receipts_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "belongs_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "belongs_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ],
+              "references": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity",
+              "referenced_columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_monarchic",
+          "purpose": "Atomic monarchic fact for this artifact.",
+          "columns": [
+            {
+              "name": "005_upstream_run_summaries_and_receipts_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "monarchic_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "monarchic_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ],
+              "references": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity",
+              "referenced_columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_infrastructure",
+          "purpose": "Atomic infrastructure fact for this artifact.",
+          "columns": [
+            {
+              "name": "005_upstream_run_summaries_and_receipts_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "infrastructure_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "infrastructure_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ],
+              "references": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity",
+              "referenced_columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__rel_receipt",
+          "purpose": "Independent receipt relationship predicate.",
+          "columns": [
+            {
+              "name": "005_upstream_run_summaries_and_receipts_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "receipt_target_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "relationship_role",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "cardinality",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "receipt_target_id",
+            "relationship_role"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ],
+              "references": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity",
+              "referenced_columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__evidence_reference",
+          "purpose": "Reference-only evidence relation; bytes and object payloads stay outside relational state.",
+          "columns": [
+            {
+              "name": "005_upstream_run_summaries_and_receipts_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_kind",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_hash",
+              "type": "TEXT /* digest */",
+              "nullable": true
+            }
+          ],
+          "primary_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "reference_kind",
+            "reference_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ],
+              "references": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity",
+              "referenced_columns": [
+                "005_upstream_run_summaries_and_receipts_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        }
+      ],
+      "atomic_fact_tables": [
+        {
+          "field_name": "upstream",
+          "table": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_upstream",
+          "value_column": "upstream_value",
+          "candidate_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "upstream_value"
+          ]
+        },
+        {
+          "field_name": "run",
+          "table": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_run",
+          "value_column": "run_value",
+          "candidate_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "run_value"
+          ]
+        },
+        {
+          "field_name": "summaries",
+          "table": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_summaries",
+          "value_column": "summaries_value",
+          "candidate_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "summaries_value"
+          ]
+        },
+        {
+          "field_name": "receipts",
+          "table": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_receipts",
+          "value_column": "receipts_value",
+          "candidate_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "receipts_value"
+          ]
+        },
+        {
+          "field_name": "remote",
+          "table": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_remote",
+          "value_column": "remote_value",
+          "candidate_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "remote_value"
+          ]
+        },
+        {
+          "field_name": "durable",
+          "table": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_durable",
+          "value_column": "durable_value",
+          "candidate_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "durable_value"
+          ]
+        },
+        {
+          "field_name": "belongs",
+          "table": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_belongs",
+          "value_column": "belongs_value",
+          "candidate_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "belongs_value"
+          ]
+        },
+        {
+          "field_name": "monarchic",
+          "table": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_monarchic",
+          "value_column": "monarchic_value",
+          "candidate_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "monarchic_value"
+          ]
+        },
+        {
+          "field_name": "infrastructure",
+          "table": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_infrastructure",
+          "value_column": "infrastructure_value",
+          "candidate_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "infrastructure_value"
+          ]
+        }
+      ],
+      "relationship_tables": [
+        {
+          "relationship": "receipt",
+          "table": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__rel_receipt",
+          "target_column": "receipt_target_id",
+          "candidate_key": [
+            "005_upstream_run_summaries_and_receipts_id",
+            "receipt_target_id",
+            "relationship_role"
+          ]
+        }
+      ],
+      "reconstruction_view": {
+        "name": "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__reconstruction_v",
+        "lossless_join_tables": [
+          "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity",
+          "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__catalog_version",
+          "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__owner",
+          "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__persistence",
+          "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_upstream",
+          "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_run",
+          "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_summaries",
+          "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_receipts",
+          "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_remote",
+          "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_durable",
+          "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_belongs",
+          "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_monarchic",
+          "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_infrastructure",
+          "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__rel_receipt",
+          "monarchic_mcp_client__005_upstream_run_summaries_and_receipts__evidence_reference"
+        ],
+        "view_key": [
+          "005_upstream_run_summaries_and_receipts_id"
+        ],
+        "note": "Lossless join over identity, catalog version, owner, persistence, each atomic fact relation, relationship relations, and evidence references. No generic EAV table or full artifact JSON table participates."
+      },
+      "sqlite_ddl": [
+        "CREATE TABLE monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity (\n  005_upstream_run_summaries_and_receipts_id TEXT NOT NULL,\n  surface_name TEXT NOT NULL,\n  catalog_row_number INTEGER NOT NULL,\n  classification TEXT NOT NULL,\n  PRIMARY KEY (005_upstream_run_summaries_and_receipts_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__005_upstream_run_summaries_and_receipts__catalog_version (\n  005_upstream_run_summaries_and_receipts_id TEXT NOT NULL,\n  catalog_sha256 TEXT /* digest */ NOT NULL,\n  schema_version TEXT NOT NULL,\n  PRIMARY KEY (005_upstream_run_summaries_and_receipts_id, catalog_sha256),\n  FOREIGN KEY (005_upstream_run_summaries_and_receipts_id) REFERENCES monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity(005_upstream_run_summaries_and_receipts_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__005_upstream_run_summaries_and_receipts__owner (\n  005_upstream_run_summaries_and_receipts_id TEXT NOT NULL,\n  owner_name TEXT NOT NULL,\n  owner_scope TEXT NOT NULL,\n  PRIMARY KEY (005_upstream_run_summaries_and_receipts_id, owner_name),\n  FOREIGN KEY (005_upstream_run_summaries_and_receipts_id) REFERENCES monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity(005_upstream_run_summaries_and_receipts_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__005_upstream_run_summaries_and_receipts__persistence (\n  005_upstream_run_summaries_and_receipts_id TEXT NOT NULL,\n  persistence_kind TEXT NOT NULL,\n  location_pattern TEXT NOT NULL,\n  environment_selector TEXT,\n  PRIMARY KEY (005_upstream_run_summaries_and_receipts_id, persistence_kind, location_pattern),\n  FOREIGN KEY (005_upstream_run_summaries_and_receipts_id) REFERENCES monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity(005_upstream_run_summaries_and_receipts_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_upstream (\n  005_upstream_run_summaries_and_receipts_id TEXT NOT NULL,\n  upstream_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (005_upstream_run_summaries_and_receipts_id, upstream_value),\n  FOREIGN KEY (005_upstream_run_summaries_and_receipts_id) REFERENCES monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity(005_upstream_run_summaries_and_receipts_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_run (\n  005_upstream_run_summaries_and_receipts_id TEXT NOT NULL,\n  run_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (005_upstream_run_summaries_and_receipts_id, run_value),\n  FOREIGN KEY (005_upstream_run_summaries_and_receipts_id) REFERENCES monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity(005_upstream_run_summaries_and_receipts_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_summaries (\n  005_upstream_run_summaries_and_receipts_id TEXT NOT NULL,\n  summaries_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (005_upstream_run_summaries_and_receipts_id, summaries_value),\n  FOREIGN KEY (005_upstream_run_summaries_and_receipts_id) REFERENCES monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity(005_upstream_run_summaries_and_receipts_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_receipts (\n  005_upstream_run_summaries_and_receipts_id TEXT NOT NULL,\n  receipts_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (005_upstream_run_summaries_and_receipts_id, receipts_value),\n  FOREIGN KEY (005_upstream_run_summaries_and_receipts_id) REFERENCES monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity(005_upstream_run_summaries_and_receipts_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_remote (\n  005_upstream_run_summaries_and_receipts_id TEXT NOT NULL,\n  remote_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (005_upstream_run_summaries_and_receipts_id, remote_value),\n  FOREIGN KEY (005_upstream_run_summaries_and_receipts_id) REFERENCES monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity(005_upstream_run_summaries_and_receipts_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_durable (\n  005_upstream_run_summaries_and_receipts_id TEXT NOT NULL,\n  durable_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (005_upstream_run_summaries_and_receipts_id, durable_value),\n  FOREIGN KEY (005_upstream_run_summaries_and_receipts_id) REFERENCES monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity(005_upstream_run_summaries_and_receipts_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_belongs (\n  005_upstream_run_summaries_and_receipts_id TEXT NOT NULL,\n  belongs_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (005_upstream_run_summaries_and_receipts_id, belongs_value),\n  FOREIGN KEY (005_upstream_run_summaries_and_receipts_id) REFERENCES monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity(005_upstream_run_summaries_and_receipts_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_monarchic (\n  005_upstream_run_summaries_and_receipts_id TEXT NOT NULL,\n  monarchic_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (005_upstream_run_summaries_and_receipts_id, monarchic_value),\n  FOREIGN KEY (005_upstream_run_summaries_and_receipts_id) REFERENCES monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity(005_upstream_run_summaries_and_receipts_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__005_upstream_run_summaries_and_receipts__fact_infrastructure (\n  005_upstream_run_summaries_and_receipts_id TEXT NOT NULL,\n  infrastructure_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (005_upstream_run_summaries_and_receipts_id, infrastructure_value),\n  FOREIGN KEY (005_upstream_run_summaries_and_receipts_id) REFERENCES monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity(005_upstream_run_summaries_and_receipts_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__005_upstream_run_summaries_and_receipts__rel_receipt (\n  005_upstream_run_summaries_and_receipts_id TEXT NOT NULL,\n  receipt_target_id TEXT NOT NULL,\n  relationship_role TEXT NOT NULL,\n  cardinality TEXT NOT NULL,\n  PRIMARY KEY (005_upstream_run_summaries_and_receipts_id, receipt_target_id, relationship_role),\n  FOREIGN KEY (005_upstream_run_summaries_and_receipts_id) REFERENCES monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity(005_upstream_run_summaries_and_receipts_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__005_upstream_run_summaries_and_receipts__evidence_reference (\n  005_upstream_run_summaries_and_receipts_id TEXT NOT NULL,\n  reference_kind TEXT NOT NULL,\n  reference_value TEXT NOT NULL,\n  reference_hash TEXT /* digest */,\n  PRIMARY KEY (005_upstream_run_summaries_and_receipts_id, reference_kind, reference_value),\n  FOREIGN KEY (005_upstream_run_summaries_and_receipts_id) REFERENCES monarchic_mcp_client__005_upstream_run_summaries_and_receipts__identity(005_upstream_run_summaries_and_receipts_id)\n);"
+      ]
+    },
+    {
+      "artifact_id": "007_database_queries",
+      "source_catalog_row": 7,
+      "surface": "Database queries",
+      "owner": "Hosted service",
+      "persistence": "Not owned locally",
+      "notes": "This client shim does not query databases directly.",
+      "candidate_key": [
+        "007_database_queries_id"
+      ],
+      "tables": [
+        {
+          "name": "monarchic_mcp_client__007_database_queries__identity",
+          "purpose": "Artifact identity and catalog binding.",
+          "columns": [
+            {
+              "name": "007_database_queries_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "surface_name",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "catalog_row_number",
+              "type": "INTEGER",
+              "nullable": false
+            },
+            {
+              "name": "classification",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "007_database_queries_id"
+          ],
+          "foreign_keys": [],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__007_database_queries__catalog_version",
+          "purpose": "Catalog-version provenance independent of artifact contents.",
+          "columns": [
+            {
+              "name": "007_database_queries_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "catalog_sha256",
+              "type": "TEXT /* digest */",
+              "nullable": false
+            },
+            {
+              "name": "schema_version",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "007_database_queries_id",
+            "catalog_sha256"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "007_database_queries_id"
+              ],
+              "references": "monarchic_mcp_client__007_database_queries__identity",
+              "referenced_columns": [
+                "007_database_queries_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__007_database_queries__owner",
+          "purpose": "Owner assignment independent of persistence and artifact facts.",
+          "columns": [
+            {
+              "name": "007_database_queries_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "owner_name",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "owner_scope",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "007_database_queries_id",
+            "owner_name"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "007_database_queries_id"
+              ],
+              "references": "monarchic_mcp_client__007_database_queries__identity",
+              "referenced_columns": [
+                "007_database_queries_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__007_database_queries__persistence",
+          "purpose": "Persistence location/pattern independent of owner and facts.",
+          "columns": [
+            {
+              "name": "007_database_queries_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "persistence_kind",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "location_pattern",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "environment_selector",
+              "type": "TEXT",
+              "nullable": true
+            }
+          ],
+          "primary_key": [
+            "007_database_queries_id",
+            "persistence_kind",
+            "location_pattern"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "007_database_queries_id"
+              ],
+              "references": "monarchic_mcp_client__007_database_queries__identity",
+              "referenced_columns": [
+                "007_database_queries_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__007_database_queries__fact_database",
+          "purpose": "Atomic database fact for this artifact.",
+          "columns": [
+            {
+              "name": "007_database_queries_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "database_value",
+              "type": "TEXT /* ISO-8601 */",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "007_database_queries_id",
+            "database_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "007_database_queries_id"
+              ],
+              "references": "monarchic_mcp_client__007_database_queries__identity",
+              "referenced_columns": [
+                "007_database_queries_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__007_database_queries__fact_queries",
+          "purpose": "Atomic queries fact for this artifact.",
+          "columns": [
+            {
+              "name": "007_database_queries_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "queries_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "007_database_queries_id",
+            "queries_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "007_database_queries_id"
+              ],
+              "references": "monarchic_mcp_client__007_database_queries__identity",
+              "referenced_columns": [
+                "007_database_queries_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__007_database_queries__fact_locally",
+          "purpose": "Atomic locally fact for this artifact.",
+          "columns": [
+            {
+              "name": "007_database_queries_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "locally_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "007_database_queries_id",
+            "locally_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "007_database_queries_id"
+              ],
+              "references": "monarchic_mcp_client__007_database_queries__identity",
+              "referenced_columns": [
+                "007_database_queries_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__007_database_queries__fact_client",
+          "purpose": "Atomic client fact for this artifact.",
+          "columns": [
+            {
+              "name": "007_database_queries_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "client_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "007_database_queries_id",
+            "client_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "007_database_queries_id"
+              ],
+              "references": "monarchic_mcp_client__007_database_queries__identity",
+              "referenced_columns": [
+                "007_database_queries_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__007_database_queries__fact_shim",
+          "purpose": "Atomic shim fact for this artifact.",
+          "columns": [
+            {
+              "name": "007_database_queries_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "shim_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "007_database_queries_id",
+            "shim_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "007_database_queries_id"
+              ],
+              "references": "monarchic_mcp_client__007_database_queries__identity",
+              "referenced_columns": [
+                "007_database_queries_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__007_database_queries__fact_does",
+          "purpose": "Atomic does fact for this artifact.",
+          "columns": [
+            {
+              "name": "007_database_queries_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "does_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "007_database_queries_id",
+            "does_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "007_database_queries_id"
+              ],
+              "references": "monarchic_mcp_client__007_database_queries__identity",
+              "referenced_columns": [
+                "007_database_queries_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__007_database_queries__fact_query",
+          "purpose": "Atomic query fact for this artifact.",
+          "columns": [
+            {
+              "name": "007_database_queries_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "query_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "007_database_queries_id",
+            "query_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "007_database_queries_id"
+              ],
+              "references": "monarchic_mcp_client__007_database_queries__identity",
+              "referenced_columns": [
+                "007_database_queries_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__007_database_queries__fact_databases",
+          "purpose": "Atomic databases fact for this artifact.",
+          "columns": [
+            {
+              "name": "007_database_queries_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "databases_value",
+              "type": "TEXT /* ISO-8601 */",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "007_database_queries_id",
+            "databases_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "007_database_queries_id"
+              ],
+              "references": "monarchic_mcp_client__007_database_queries__identity",
+              "referenced_columns": [
+                "007_database_queries_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__007_database_queries__fact_directly",
+          "purpose": "Atomic directly fact for this artifact.",
+          "columns": [
+            {
+              "name": "007_database_queries_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "directly_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "fact_source",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "007_database_queries_id",
+            "directly_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "007_database_queries_id"
+              ],
+              "references": "monarchic_mcp_client__007_database_queries__identity",
+              "referenced_columns": [
+                "007_database_queries_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__007_database_queries__rel_query",
+          "purpose": "Independent query relationship predicate.",
+          "columns": [
+            {
+              "name": "007_database_queries_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "query_target_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "relationship_role",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "cardinality",
+              "type": "TEXT",
+              "nullable": false
+            }
+          ],
+          "primary_key": [
+            "007_database_queries_id",
+            "query_target_id",
+            "relationship_role"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "007_database_queries_id"
+              ],
+              "references": "monarchic_mcp_client__007_database_queries__identity",
+              "referenced_columns": [
+                "007_database_queries_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        },
+        {
+          "name": "monarchic_mcp_client__007_database_queries__evidence_reference",
+          "purpose": "Reference-only evidence relation; bytes and object payloads stay outside relational state.",
+          "columns": [
+            {
+              "name": "007_database_queries_id",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_kind",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_value",
+              "type": "TEXT",
+              "nullable": false
+            },
+            {
+              "name": "reference_hash",
+              "type": "TEXT /* digest */",
+              "nullable": true
+            }
+          ],
+          "primary_key": [
+            "007_database_queries_id",
+            "reference_kind",
+            "reference_value"
+          ],
+          "foreign_keys": [
+            {
+              "columns": [
+                "007_database_queries_id"
+              ],
+              "references": "monarchic_mcp_client__007_database_queries__identity",
+              "referenced_columns": [
+                "007_database_queries_id"
+              ]
+            }
+          ],
+          "normal_form": "5NF",
+          "join_dependency": "This relation records exactly one independent predicate over its full candidate key; joining all artifact predicates reconstructs the artifact without update anomalies."
+        }
+      ],
+      "atomic_fact_tables": [
+        {
+          "field_name": "database",
+          "table": "monarchic_mcp_client__007_database_queries__fact_database",
+          "value_column": "database_value",
+          "candidate_key": [
+            "007_database_queries_id",
+            "database_value"
+          ]
+        },
+        {
+          "field_name": "queries",
+          "table": "monarchic_mcp_client__007_database_queries__fact_queries",
+          "value_column": "queries_value",
+          "candidate_key": [
+            "007_database_queries_id",
+            "queries_value"
+          ]
+        },
+        {
+          "field_name": "locally",
+          "table": "monarchic_mcp_client__007_database_queries__fact_locally",
+          "value_column": "locally_value",
+          "candidate_key": [
+            "007_database_queries_id",
+            "locally_value"
+          ]
+        },
+        {
+          "field_name": "client",
+          "table": "monarchic_mcp_client__007_database_queries__fact_client",
+          "value_column": "client_value",
+          "candidate_key": [
+            "007_database_queries_id",
+            "client_value"
+          ]
+        },
+        {
+          "field_name": "shim",
+          "table": "monarchic_mcp_client__007_database_queries__fact_shim",
+          "value_column": "shim_value",
+          "candidate_key": [
+            "007_database_queries_id",
+            "shim_value"
+          ]
+        },
+        {
+          "field_name": "does",
+          "table": "monarchic_mcp_client__007_database_queries__fact_does",
+          "value_column": "does_value",
+          "candidate_key": [
+            "007_database_queries_id",
+            "does_value"
+          ]
+        },
+        {
+          "field_name": "query",
+          "table": "monarchic_mcp_client__007_database_queries__fact_query",
+          "value_column": "query_value",
+          "candidate_key": [
+            "007_database_queries_id",
+            "query_value"
+          ]
+        },
+        {
+          "field_name": "databases",
+          "table": "monarchic_mcp_client__007_database_queries__fact_databases",
+          "value_column": "databases_value",
+          "candidate_key": [
+            "007_database_queries_id",
+            "databases_value"
+          ]
+        },
+        {
+          "field_name": "directly",
+          "table": "monarchic_mcp_client__007_database_queries__fact_directly",
+          "value_column": "directly_value",
+          "candidate_key": [
+            "007_database_queries_id",
+            "directly_value"
+          ]
+        }
+      ],
+      "relationship_tables": [
+        {
+          "relationship": "query",
+          "table": "monarchic_mcp_client__007_database_queries__rel_query",
+          "target_column": "query_target_id",
+          "candidate_key": [
+            "007_database_queries_id",
+            "query_target_id",
+            "relationship_role"
+          ]
+        }
+      ],
+      "reconstruction_view": {
+        "name": "monarchic_mcp_client__007_database_queries__reconstruction_v",
+        "lossless_join_tables": [
+          "monarchic_mcp_client__007_database_queries__identity",
+          "monarchic_mcp_client__007_database_queries__catalog_version",
+          "monarchic_mcp_client__007_database_queries__owner",
+          "monarchic_mcp_client__007_database_queries__persistence",
+          "monarchic_mcp_client__007_database_queries__fact_database",
+          "monarchic_mcp_client__007_database_queries__fact_queries",
+          "monarchic_mcp_client__007_database_queries__fact_locally",
+          "monarchic_mcp_client__007_database_queries__fact_client",
+          "monarchic_mcp_client__007_database_queries__fact_shim",
+          "monarchic_mcp_client__007_database_queries__fact_does",
+          "monarchic_mcp_client__007_database_queries__fact_query",
+          "monarchic_mcp_client__007_database_queries__fact_databases",
+          "monarchic_mcp_client__007_database_queries__fact_directly",
+          "monarchic_mcp_client__007_database_queries__rel_query",
+          "monarchic_mcp_client__007_database_queries__evidence_reference"
+        ],
+        "view_key": [
+          "007_database_queries_id"
+        ],
+        "note": "Lossless join over identity, catalog version, owner, persistence, each atomic fact relation, relationship relations, and evidence references. No generic EAV table or full artifact JSON table participates."
+      },
+      "sqlite_ddl": [
+        "CREATE TABLE monarchic_mcp_client__007_database_queries__identity (\n  007_database_queries_id TEXT NOT NULL,\n  surface_name TEXT NOT NULL,\n  catalog_row_number INTEGER NOT NULL,\n  classification TEXT NOT NULL,\n  PRIMARY KEY (007_database_queries_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__007_database_queries__catalog_version (\n  007_database_queries_id TEXT NOT NULL,\n  catalog_sha256 TEXT /* digest */ NOT NULL,\n  schema_version TEXT NOT NULL,\n  PRIMARY KEY (007_database_queries_id, catalog_sha256),\n  FOREIGN KEY (007_database_queries_id) REFERENCES monarchic_mcp_client__007_database_queries__identity(007_database_queries_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__007_database_queries__owner (\n  007_database_queries_id TEXT NOT NULL,\n  owner_name TEXT NOT NULL,\n  owner_scope TEXT NOT NULL,\n  PRIMARY KEY (007_database_queries_id, owner_name),\n  FOREIGN KEY (007_database_queries_id) REFERENCES monarchic_mcp_client__007_database_queries__identity(007_database_queries_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__007_database_queries__persistence (\n  007_database_queries_id TEXT NOT NULL,\n  persistence_kind TEXT NOT NULL,\n  location_pattern TEXT NOT NULL,\n  environment_selector TEXT,\n  PRIMARY KEY (007_database_queries_id, persistence_kind, location_pattern),\n  FOREIGN KEY (007_database_queries_id) REFERENCES monarchic_mcp_client__007_database_queries__identity(007_database_queries_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__007_database_queries__fact_database (\n  007_database_queries_id TEXT NOT NULL,\n  database_value TEXT /* ISO-8601 */ NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (007_database_queries_id, database_value),\n  FOREIGN KEY (007_database_queries_id) REFERENCES monarchic_mcp_client__007_database_queries__identity(007_database_queries_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__007_database_queries__fact_queries (\n  007_database_queries_id TEXT NOT NULL,\n  queries_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (007_database_queries_id, queries_value),\n  FOREIGN KEY (007_database_queries_id) REFERENCES monarchic_mcp_client__007_database_queries__identity(007_database_queries_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__007_database_queries__fact_locally (\n  007_database_queries_id TEXT NOT NULL,\n  locally_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (007_database_queries_id, locally_value),\n  FOREIGN KEY (007_database_queries_id) REFERENCES monarchic_mcp_client__007_database_queries__identity(007_database_queries_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__007_database_queries__fact_client (\n  007_database_queries_id TEXT NOT NULL,\n  client_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (007_database_queries_id, client_value),\n  FOREIGN KEY (007_database_queries_id) REFERENCES monarchic_mcp_client__007_database_queries__identity(007_database_queries_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__007_database_queries__fact_shim (\n  007_database_queries_id TEXT NOT NULL,\n  shim_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (007_database_queries_id, shim_value),\n  FOREIGN KEY (007_database_queries_id) REFERENCES monarchic_mcp_client__007_database_queries__identity(007_database_queries_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__007_database_queries__fact_does (\n  007_database_queries_id TEXT NOT NULL,\n  does_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (007_database_queries_id, does_value),\n  FOREIGN KEY (007_database_queries_id) REFERENCES monarchic_mcp_client__007_database_queries__identity(007_database_queries_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__007_database_queries__fact_query (\n  007_database_queries_id TEXT NOT NULL,\n  query_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (007_database_queries_id, query_value),\n  FOREIGN KEY (007_database_queries_id) REFERENCES monarchic_mcp_client__007_database_queries__identity(007_database_queries_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__007_database_queries__fact_databases (\n  007_database_queries_id TEXT NOT NULL,\n  databases_value TEXT /* ISO-8601 */ NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (007_database_queries_id, databases_value),\n  FOREIGN KEY (007_database_queries_id) REFERENCES monarchic_mcp_client__007_database_queries__identity(007_database_queries_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__007_database_queries__fact_directly (\n  007_database_queries_id TEXT NOT NULL,\n  directly_value TEXT NOT NULL,\n  fact_source TEXT NOT NULL,\n  PRIMARY KEY (007_database_queries_id, directly_value),\n  FOREIGN KEY (007_database_queries_id) REFERENCES monarchic_mcp_client__007_database_queries__identity(007_database_queries_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__007_database_queries__rel_query (\n  007_database_queries_id TEXT NOT NULL,\n  query_target_id TEXT NOT NULL,\n  relationship_role TEXT NOT NULL,\n  cardinality TEXT NOT NULL,\n  PRIMARY KEY (007_database_queries_id, query_target_id, relationship_role),\n  FOREIGN KEY (007_database_queries_id) REFERENCES monarchic_mcp_client__007_database_queries__identity(007_database_queries_id)\n);",
+        "CREATE TABLE monarchic_mcp_client__007_database_queries__evidence_reference (\n  007_database_queries_id TEXT NOT NULL,\n  reference_kind TEXT NOT NULL,\n  reference_value TEXT NOT NULL,\n  reference_hash TEXT /* digest */,\n  PRIMARY KEY (007_database_queries_id, reference_kind, reference_value),\n  FOREIGN KEY (007_database_queries_id) REFERENCES monarchic_mcp_client__007_database_queries__identity(007_database_queries_id)\n);"
+      ]
+    }
+  ]
+}
