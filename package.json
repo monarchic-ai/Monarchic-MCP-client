@@ -1,8 +1,8 @@
 {
-  "name": "@monarchic-ai/mcp",
+  "name": "@monarchic-ai/monarchic-mcp-client",
   "version": "0.1.1",
   "private": false,
-  "description": "Hosted Monarchic MCP stdio client shim.",
+  "description": "Hosted Monarchic-MCP stdio client shim.",
   "type": "module",
   "bin": {
     "monarchic-mcp": "dist/bin/monarchic-mcp.js",
@@ -33,5 +33,10 @@
     "@types/node": "^22.15.3",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
+  },
+  "displayName": "Monarchic-MCP-client",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/monarchic-ai/Monarchic-MCP-client.git"
   }
 }
