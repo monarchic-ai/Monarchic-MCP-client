@@ -1,8 +1,8 @@
-# Monarchic MCP Client
+# Monarchic-MCP-client
 
-`@monarchic-ai/mcp` is a small stdio MCP shim for hosted Monarchic. MCP hosts
+`@monarchic-ai/monarchic-mcp-client` is a small stdio MCP shim for hosted Monarchic. MCP hosts
 start this package locally, and the shim forwards MCP JSON-RPC requests to the
-Monarchic MCP endpoint running in infrastructure.
+Monarchic-MCP endpoint running in infrastructure.
 
 ## Usage
 
@@ -11,7 +11,7 @@ Monarchic MCP endpoint running in infrastructure.
   "mcpServers": {
     "monarchic": {
       "command": "pnpm",
-      "args": ["dlx", "@monarchic-ai/mcp"],
+      "args": ["dlx", "@monarchic-ai/monarchic-mcp-client"],
       "env": {
         "MONARCHIC_API_BASE_URL": "https://dev-api.monarchic.io",
         "MONARCHIC_BEARER_TOKEN": "<token>"
@@ -26,7 +26,7 @@ You can also set an explicit hosted MCP endpoint:
 ```sh
 export MONARCHIC_MCP_URL=https://dev-api.monarchic.io/mcp/monarchic
 export MONARCHIC_BEARER_TOKEN=<token>
-pnpm dlx @monarchic-ai/mcp
+pnpm dlx @monarchic-ai/monarchic-mcp-client
 ```
 
 When working from this repository, `nix develop` and direnv load `.env.local`
@@ -44,7 +44,7 @@ priority. Keep local tokens in `.env.local`; the file is ignored by git.
 - `MONARCHIC_API_KEY`: API key fallback; sent as `Authorization: Bearer ...`.
 
 The shim does not execute Monarchic locally and does not read cloud resources
-directly. All tool behavior belongs to the hosted Monarchic MCP/API.
+directly. All tool behavior belongs to the hosted Monarchic-MCP/API.
 The hosted MCP client architecture boundary is documented in
 [`docs/hosted-mcp-client-architecture.md`](docs/hosted-mcp-client-architecture.md).
 
@@ -74,3 +74,4 @@ Optional launch/follow inputs:
   launch response includes a run id.
 - `MONARCHIC_MCP_SMOKE_PROJECT_KEY`: project key required when launch is enabled.
 - `MONARCHIC_MCP_SMOKE_PROMPT`: custom launch prompt.
+
